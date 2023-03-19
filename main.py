@@ -1,16 +1,22 @@
 #!python3
-
-import PySide6.QtCore
 import sys
+from PySide6.QtWidgets import QApplication
 
-from simulation.check_me import hello
+from simulation.main_window import MainWindow
 
 
 def main(argv):
-    print(hello(), f"{argv=}")
-    print(PySide6.__version__)
-    print(PySide6.QtCore.__version__)
+    app = QApplication(argv)
 
+    window = MainWindow()
+    window.resize(1024, 768)
+    window.show()
+
+    # maybe call some post init stuff
+    ret_code = app.exec()
+    # maybe call some closing handlers
+
+    return ret_code
 
 if __name__ == "__main__":
     exit(main(sys.argv))
