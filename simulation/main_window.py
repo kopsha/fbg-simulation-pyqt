@@ -14,6 +14,7 @@ from PySide6.QtCore import Qt
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+
         self.hellos = [
             "Hello world",
             "Hallo Welt",
@@ -21,31 +22,35 @@ class MainWindow(QWidget):
             "Hola Mundo",
             "Привет мир",
         ]
+        self.setup_ui()
 
-        icons = [
-            res_name
-            for res_name in dir(QStyle.StandardPixmap)
-            if res_name.startswith("SP_")
-        ]
-        self.icon_grid = QGridLayout()
-
-        ICON_COLS = 5
-        for i, name in enumerate(icons):
-            btn = QPushButton(name)
-            pixmap = getattr(QStyle.StandardPixmap, name)
-            icon = self.style().standardIcon(pixmap)
-            btn.setIcon(icon)
-            self.icon_grid.addWidget(btn, i // ICON_COLS, i % ICON_COLS)
-
-        self.button = QPushButton("push")
-        self.text = QLabel(self.hellos[0], alignment=Qt.AlignCenter)
+    def setup_ui(self):
         self.layout = QVBoxLayout(self)
 
+        self.icon_grid = self.make_icons_grid_layout()
         self.layout.addLayout(self.icon_grid)
-        self.layout.addWidget(self.text)
-        self.layout.addWidget(self.button)
 
+        self.text = QLabel(self.hellos[0], alignment=Qt.AlignCenter)
+        self.layout.addWidget(self.text)
+
+        self.button = QPushButton("push")
+        self.layout.addWidget(self.button)
         self.button.clicked.connect(self.on_click)
+
+    def make_icons_grid_layout(self):
+        icon_grid = QGridLayout()
+
+        ICON_COLS = 5
+        standard_icons = (
+            si for si in QStyle.StandardPixmap if si.name.startswith("SP_")
+        )
+        for i, sp in enumerate(standard_icons):
+            icon = self.style().standardIcon(sp)
+            label = QLabel(self)
+            label.setPixmap(icon.pixmap(32))
+            icon_grid.addWidget(label, i // ICON_COLS, i % ICON_COLS)
+
+        return icon_grid
 
     @QtCore.Slot()
     def on_click(self):
