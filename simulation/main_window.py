@@ -1,14 +1,26 @@
 import random
-from PySide6.QtWidgets import QWidget, QPushButton, QLabel, QVBoxLayout, QStyle, QGridLayout
+from PySide6.QtWidgets import (
+    QWidget,
+    QPushButton,
+    QLabel,
+    QVBoxLayout,
+    QStyle,
+    QGridLayout,
+)
 from PySide6 import QtCore
 from PySide6.QtCore import Qt
-
 
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.hellos = ["Hello world", "Hallo Welt", "Hei maailma", "Hola Mundo", "Привет мир"]
+        self.hellos = [
+            "Hello world",
+            "Hallo Welt",
+            "Hei maailma",
+            "Hola Mundo",
+            "Привет мир",
+        ]
 
         icons = [
             res_name
@@ -23,7 +35,7 @@ class MainWindow(QWidget):
             pixmap = getattr(QStyle.StandardPixmap, name)
             icon = self.style().standardIcon(pixmap)
             btn.setIcon(icon)
-            self.icon_grid.addWidget(btn, i//ICON_COLS, i%ICON_COLS)
+            self.icon_grid.addWidget(btn, i // ICON_COLS, i % ICON_COLS)
 
         self.button = QPushButton("push")
         self.text = QLabel(self.hellos[0], alignment=Qt.AlignCenter)
