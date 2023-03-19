@@ -46,9 +46,11 @@ class MainWindow(QWidget):
         )
         for i, sp in enumerate(standard_icons):
             icon = self.style().standardIcon(sp)
-            label = QLabel(self)
-            label.setPixmap(icon.pixmap(32))
-            icon_grid.addWidget(label, i // ICON_COLS, i % ICON_COLS)
+            icon_label = QLabel(self)
+            icon_label.setPixmap(icon.pixmap(32))
+            icon_label.setMinimumSize(55, 38)
+            icon_label.setAlignment(Qt.AlignCenter)
+            icon_grid.addWidget(icon_label, i // ICON_COLS, i % ICON_COLS)
 
         return icon_grid
 
