@@ -1,19 +1,15 @@
-#!/usr/bin/env python3
-from PyQt5.QtWidgets import QApplication
+#!python3
+
+import PySide6.QtCore
 import sys
 
 from simulation.check_me import hello
 
 
 def main(argv):
-    print(f"{argv=}", hello())
-    app = QApplication(argv)
-    ret_code = app.exec_()
-
-    if ret_code:
-        print("Something went wrong")
-    
-    return ret_code
+    print(hello(), f"{argv=}")
+    print(PySide6.__version__)
+    print(PySide6.QtCore.__version__)
 
 
 if __name__ == "__main__":
