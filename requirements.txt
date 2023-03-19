@@ -1,0 +1,5 @@
+PyQt5==5.*
+PyQt5-Qt5==5.*
+PyQt5-sip==12.*
+pytest
+fbs
