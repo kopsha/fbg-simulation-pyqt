@@ -3,7 +3,7 @@ import sys
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QIcon
 
-from simulation.main_window import MainWindow
+from gui.main_window import MainWindow
 
 
 def main(argv):
