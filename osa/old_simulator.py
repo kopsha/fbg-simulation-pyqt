@@ -230,7 +230,7 @@ class OSASimulation(object):
                 self.MinBandWidth, self.MaxBandWidth, self.SimulationResolution
             ):
                 # print("---------- WAVELENGTH: "+str(l))
-                f1 = np.matrix("1 0; 0 1")  # empty transfer matrix
+                f1 = np.identity(2)  # empty transfer matrix
                 M = 20.0  # Sections the gratting is divided-- Transfer Matrix
                 # FBG increment size (nm)
                 deltz = (self.FBGLength * (10.0**6)) / M
@@ -268,7 +268,7 @@ class OSASimulation(object):
                     # print("TM: "+str(gammab))
 
                     # Assemble Transfer Matrix
-                    f1 = np.dot(f1, np.matrix([[f11, f12], [f21, f22]]))
+                    f1 = np.dot(f1, np.array([[f11, f12], [f21, f22]]))
                     # print("Transfer Matrix "+str(z)+": "+str(f1))
                 PO = f1[0, 0]
                 NO = f1[1, 0]
@@ -278,8 +278,8 @@ class OSASimulation(object):
                 self.OReflect["wavelength"].append(l)
                 self.OReflect["reflec"].append(REF)
 
-        print(self.OReflect["wavelength"][0:15])
-        print(self.OReflect["reflec"][0:15])
+        # print(self.OReflect["wavelength"][0:15])
+        # print(self.OReflect["reflec"][0:15])
 
     def DeformedFBG(
         self,
