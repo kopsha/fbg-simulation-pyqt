@@ -21,7 +21,7 @@ adapted.
 ## Features
 
 - Easy-to-use interface for managing simulations
-- Decoupled FBG simulation code (fully tested with pytest)
+- Decoupled implementation of FBG simulation (fully tested with pytest)
 - [WIP, will add more]
 
 
@@ -32,7 +32,11 @@ adapted.
 The python application is built with [PySide6](https://pypi.org/project/PySide6/)
 and uses [pytest](https://docs.pytest.org/) for all its unit tests.
 
-The required packages are listed in [requirements.txt](./requirements.txt)
+You can install all required packages with the followin command:
+
+```bash
+pip install -r requirements.txt
+```
 
 
 ### Installation
