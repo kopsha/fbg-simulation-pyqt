@@ -64,7 +64,7 @@ Please make sure to review the licenses of these projects to understand their te
 work, please cite the following paper:
 
 > Frey, B., Snyder, P., Ziock, K., & Passian, A. (2021).
-> "Semicomputational calculation of Bragg shift in stratified materials"
+> _"Semicomputational calculation of Bragg shift in stratified materials"_.
 > Physical Review E, 104(5), 055307.
 
 
