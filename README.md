@@ -52,6 +52,14 @@ This project is built upon, and adapted from, the following open source projects
 
 Please make sure to review the licenses of these projects to understand their terms and conditions. Our project adheres to these licenses and provides proper attribution to the original authors.
 
+**Citation**: If you choose to use elements of this application in your own
+work, please cite the following paper:
+
+> Frey, B., Snyder, P., Ziock, K., & Passian, A. (2021).
+> Semicomputational calculation of Bragg shift in stratified materials.
+> Physical Review E, 104(5), 055307.
+
+
 ## License
 
 This project is licensed under the [BSD-3] - see the [LICENSE](./LICENSE) file
