@@ -18,14 +18,12 @@ This project is released under [BSD 3](./LICENSE), and we adhere to the
 licensing and attribution requirements of the original projects that we have
 adapted.
 
-
 ## Features
 
-A big TODO:
-- [Feature 1]
-- [Feature 2]
-- [Feature 3]
-- [and so on...]
+- Easy-to-use interface for managing simulations
+- Decoupled FBG simulation code (fully tested with pytest)
+- [WIP, will add more]
+
 
 ## Getting Started
 
@@ -39,7 +37,13 @@ The required packages are listed in [requirements.txt](./requirements.txt)
 
 ### Installation
 
-A big TODO:
+A big WIP!
+
+### Usage
+
+To start the application simply run the [main.py](./main.py) and load the
+provided [sample.txt](./sample/tut-export.txt) datafile.
+
 
 ## Acknowledgments and Licensing
 
@@ -56,11 +60,11 @@ Please make sure to review the licenses of these projects to understand their te
 work, please cite the following paper:
 
 > Frey, B., Snyder, P., Ziock, K., & Passian, A. (2021).
-> Semicomputational calculation of Bragg shift in stratified materials.
+> "Semicomputational calculation of Bragg shift in stratified materials"
 > Physical Review E, 104(5), 055307.
 
 
 ## License
 
-This project is licensed under the [BSD-3] - see the [LICENSE](./LICENSE) file
-for details.
+This project is licensed under the BSD-3 license. Please read the
+[LICENSE](./LICENSE) file for full details.
