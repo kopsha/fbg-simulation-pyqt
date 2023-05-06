@@ -72,8 +72,6 @@ class OSASimulation(object):
         formats = ("f8", "f8", "f8", "f8", "f8", "f8", "f8", "f8")
         dtypes = {"names": names, "formats": formats}
         self.RawData = np.loadtxt(self.filename, dtype=dtypes, skiprows=self.SkipRow)
-        print("Printing head of RawData from input file...")
-        print(self.RawData[0:5])
 
         """------------------------------------------------------------------------------
         Creating FBG array, and give them the correspondent Data
