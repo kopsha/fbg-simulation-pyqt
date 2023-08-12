@@ -4,17 +4,33 @@ TODO: review with [Ben Frey](https://github.com/benfrey)
 """
 import numpy as np
 from cmath import pi, sqrt, cosh, sinh
-from enum import Enum, auto
+from enum import IntEnum, auto
 
 
-class SiUnits(Enum):
+class SiUnits(IntEnum):
     METERS = auto()
     MILLIMETERS = auto()
 
 
+class StrainTypes(IntEnum):
+    NONE = 0
+    UNIFORM = 1
+    NON_UNIFORM = 2
+
+
 class OsaSimulator:
     def __init__(
-        self, fbg_count: int, fbg_length: float, tolerance: float, fbg_positions: list
+        self,
+        fbg_count: int,
+        fbg_length: float,
+        tolerance: float,
+        fbg_positions: list,
+        original_wavelengths: list,
+        initial_refractive_index: float,
+        directional_refractive_p11: float,
+        directional_refractive_p12: float,
+        poissons_coefficient: float,
+        emulate_temperature: float,
     ):
         """
         Prepares an OSA simulation, with following parameters:
@@ -23,6 +39,11 @@ class OsaSimulator:
         :param float fbg_length: Length of the Gratting
         :param float tolerance: Tolerance in the FBG length
         :param list positions: Position of each FBG from the begginng of the Path
+        :param float initial_refractive_index: Initial effective refractive index (neff)
+        :param float directional_refractive_p11: Pockel’s normal photoelastic constant
+        :param float directional_refractive_p12: Pockel’s shear photoelastic constant
+        :param float poissons_coefficient: Poisson's Coefficient of fiber
+        :param float emulate_temperature: Theoretical emulated temperature of fiber
 
         NB: Everything in this class will be expressed in (mm)
         """
@@ -31,6 +52,18 @@ class OsaSimulator:
         self.fbg_length = np.float64(fbg_length)
         self.tolerance = np.float64(tolerance)
         self.fbg_positions = np.array(fbg_positions, dtype=np.float64)
+
+        assert len(original_wavelengths) == self.fbg_count
+        self.original_wavelengths = original_wavelengths
+        self.APFBG = original_wavelengths[: self.fbg_count] / (
+            2.0 * initial_refractive_index
+        )
+
+        self.initial_refractive_index = initial_refractive_index
+        self.directional_refractive_p11 = directional_refractive_p11
+        self.directional_refractive_p12 = directional_refractive_p12
+        self.poissons_coefficient = poissons_coefficient
+        self.emulate_temperature = emulate_temperature
 
     def from_file(self, filepath: str, units=SiUnits.MILLIMETERS):
         """
@@ -109,21 +142,16 @@ class OsaSimulator:
         resolution: float,
         min_bandwidth: float,
         max_bandwidth: float,
-        initial_refractive_index: float,
         mean_change_refractive_index: float,
         fringe_visibility: float,
-        original_wavelengths: list,
     ):
-        assert len(original_wavelengths) == self.fbg_count
-
         # TODO: move this in constructor, or even to class variables
-        self.initial_refractive_index = initial_refractive_index
         self.mean_change_refractive_index = mean_change_refractive_index
         self.fringe_visibility = fringe_visibility
 
         original_fbg_periods = [
-            wavelen / (2.0 * initial_refractive_index)
-            for wavelen in original_wavelengths
+            wavelen / (2.0 * self.initial_refractive_index)
+            for wavelen in self.original_wavelengths
         ]
         # Empty Original Reflec spectrum
         o_reflect = dict(
@@ -143,3 +171,112 @@ class OsaSimulator:
                 o_reflect["reflec"].append(reflectivity)
 
         return o_reflect
+
+    def deformed_fbg(
+        self,
+        strain_type: StrainTypes,
+        ambient_temperature: float,
+        thermo_optic: float,
+        fiber_expansion_coefficient: float,
+        host_expansion_coefficient: float,
+    ):
+        """
+        :param IntEnum strain_type: 0 for none, 1 for uniform, 2 for non-uniform
+        :param float ambient_temperature: Base in which our reference temperature is set.
+        :param float thermo_optic: Thermo optic coefficient of fiber
+        :param float fiber_expansion_coefficient: Thermal expansion coefficient of fiber material
+        :param float host_expansion_coefficient : Thermal expansion coefficient of host material
+        """
+        # Calculate photoelastic coef from directional coefs.
+        self.photo_elastic_param = (self.initial_refractive_index**2 / 2) * (
+            self.directional_refractive_p12
+            - self.poissons_coefficient
+            * (self.directional_refractive_p11 + self.directional_refractive_p12)
+        )
+
+        # Determine if we need to emulate a theoretical temperature value
+        if self.emulate_temperature != -1.0:
+            for i in range(self.fbg_count):
+                key = f"FBG{i+1}"
+                self.fbg[key]["T"][:] = self.emulate_temperature
+
+        # Empty Reflec spectrum- Two waves (individual contributions to account for any transverse stress)
+        self.YReflect = {}  # Y wave
+        self.YReflect["wavelength"] = []
+        self.YReflect["reflec"] = []
+
+        self.ZReflect = {}  # Z wave
+        self.ZReflect["wavelength"] = []
+        self.ZReflect["reflec"] = []
+
+        # Empty Reflec spectrum- Composite wave of Y and Z contributions
+        self.DReflect = {}  # Composite wave
+        self.DReflect["wavelength"] = []
+        self.DReflect["reflec"] = []
+
+        # Cycle all the FBG sensors
+        for i in range(self.fbg_count):
+            key = f"FBG{i+1}"
+            # Sections the gratting is divided-- Transfer Matrix
+            M = len(self.fbg[key]["x"])
+            # FBG increment size (nm)
+            deltz = (self.fbg_length * (10.0**6)) / M
+
+            ## STRAIN
+            fbg_period = []
+            if strain_type == StrainTypes.NONE:  # no longitudinal strain
+                fbg_period = [self.APFBG[i] for _ in range(M)]
+            elif strain_type == StrainTypes.UNIFORM:  # uniform longitudinal strain
+                # Strain average over FBG region
+                strain_mean = np.mean(self.fbg[key]["LE11"])
+                # Temperature average over FBG region
+                temp_mean = np.mean(self.fbg[key]["T"])
+
+                # Calculate wavelength at uniform strain and temperature
+                thermo_dynamic_part = (
+                    fiber_expansion_coefficient
+                    + (1 - self.photo_elastic_param)
+                    * (host_expansion_coefficient - fiber_expansion_coefficient)
+                    + thermo_optic
+                )
+
+                new_wave_lengths = self.original_wavelengths[i] * (
+                    1
+                    + (1 - self.photo_elastic_param) * strain_mean
+                    + thermo_dynamic_part * (temp_mean - ambient_temperature)
+                )
+
+                fbg_period = [
+                    new_wave_lengths / (2.0 * self.initial_refractive_index)
+                    for _ in range(M)
+                ]
+
+            # elif strain_type == StrainTypes.NON_UNIFORM:
+            #     ## Case of "non-uniform longitudinal strain" build the grating period changed ---
+            #     for j in np.arange(0, M):
+            #         TempnewWavelength = self.FBGOriginalWavel[i] * (
+            #             1
+            #             + (1 - self.PhotoElasticParam)
+            #             * self.FBGArray["FBG" + str(i + 1)]["LE11"][j]
+            #             + (
+            #                 self.FiberThermalExpansionCoefficient
+            #                 + (1 - self.PhotoElasticParam)
+            #                 * (
+            #                     self.HostThermalExpansionCoefficient
+            #                     - self.FiberThermalExpansionCoefficient
+            #                 )
+            #                 + self.ThermoOptic
+            #             )
+            #             * (
+            #                 self.FBGArray["FBG" + str(i + 1)]["T"][j]
+            #                 - self.AmbientTemperature
+            #             )
+            #         )  # weavelength at nonuniform strain and temperature
+            #         # print(self.FBGArray['FBG'+str(i+1)]['T'][0]-self.AmbientTemperature)
+            #         FBGperiod.append(
+            #             TempnewWavelength / (2.0 * self.InitialRefractiveIndex)
+            #         )  # Grating period
+            else:
+                raise ValueError(f"{strain_type} is not a valid strain_type")
+
+        return []
