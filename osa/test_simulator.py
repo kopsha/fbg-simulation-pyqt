@@ -123,7 +123,7 @@ def test_deformed_fbg(init_params):
     simu.from_file("sample/tut-export.txt", units=units)
 
     data = simu.deformed_fbg(
-        strain_type=StrainTypes.UNIFORM,
+        strain_type=StrainTypes.NON_UNIFORM,
         ambient_temperature=293.15,
         thermo_optic=8.3e-6,
         fiber_expansion_coefficient=10e-6,  # Internet says 0.5E-6 to 1E-6

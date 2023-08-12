@@ -214,6 +214,14 @@ class OsaSimulator:
         self.DReflect["wavelength"] = []
         self.DReflect["reflec"] = []
 
+        # Compute the thermo-dynamic part, as it's used in multiple strain type conditions
+        thermo_dynamic_part = (
+            fiber_expansion_coefficient
+            + (1 - self.photo_elastic_param)
+            * (host_expansion_coefficient - fiber_expansion_coefficient)
+            + thermo_optic
+        )
+
         # Cycle all the FBG sensors
         for i in range(self.fbg_count):
             key = f"FBG{i+1}"
@@ -227,55 +235,35 @@ class OsaSimulator:
             if strain_type == StrainTypes.NONE:  # no longitudinal strain
                 fbg_period = [self.APFBG[i] for _ in range(M)]
             elif strain_type == StrainTypes.UNIFORM:  # uniform longitudinal strain
-                # Strain average over FBG region
+                # Average values over FBG region
                 strain_mean = np.mean(self.fbg[key]["LE11"])
                 # Temperature average over FBG region
                 temp_mean = np.mean(self.fbg[key]["T"])
 
-                # Calculate wavelength at uniform strain and temperature
-                thermo_dynamic_part = (
-                    fiber_expansion_coefficient
-                    + (1 - self.photo_elastic_param)
-                    * (host_expansion_coefficient - fiber_expansion_coefficient)
-                    + thermo_optic
-                )
-
-                new_wave_lengths = self.original_wavelengths[i] * (
+                new_wavelength = self.original_wavelengths[i] * (
                     1
                     + (1 - self.photo_elastic_param) * strain_mean
                     + thermo_dynamic_part * (temp_mean - ambient_temperature)
                 )
-
                 fbg_period = [
-                    new_wave_lengths / (2.0 * self.initial_refractive_index)
+                    new_wavelength / (2.0 * self.initial_refractive_index)
                     for _ in range(M)
                 ]
+            elif (
+                strain_type == StrainTypes.NON_UNIFORM
+            ):  # non-uniform longitudinal strain
+                fbg_period = [
+                    self.original_wavelengths[i]
+                    * (
+                        1
+                        + (1 - self.photo_elastic_param) * self.fbg[key]["LE11"][j]
+                        + thermo_dynamic_part
+                        * (self.fbg[key]["T"][j] - ambient_temperature)
+                    )
+                    / (2.0 * self.initial_refractive_index)
+                    for j in range(M)
+                ]
 
-            # elif strain_type == StrainTypes.NON_UNIFORM:
-            #     ## Case of "non-uniform longitudinal strain" build the grating period changed ---
-            #     for j in np.arange(0, M):
-            #         TempnewWavelength = self.FBGOriginalWavel[i] * (
-            #             1
-            #             + (1 - self.PhotoElasticParam)
-            #             * self.FBGArray["FBG" + str(i + 1)]["LE11"][j]
-            #             + (
-            #                 self.FiberThermalExpansionCoefficient
-            #                 + (1 - self.PhotoElasticParam)
-            #                 * (
-            #                     self.HostThermalExpansionCoefficient
-            #                     - self.FiberThermalExpansionCoefficient
-            #                 )
-            #                 + self.ThermoOptic
-            #             )
-            #             * (
-            #                 self.FBGArray["FBG" + str(i + 1)]["T"][j]
-            #                 - self.AmbientTemperature
-            #             )
-            #         )  # weavelength at nonuniform strain and temperature
-            #         # print(self.FBGArray['FBG'+str(i+1)]['T'][0]-self.AmbientTemperature)
-            #         FBGperiod.append(
-            #             TempnewWavelength / (2.0 * self.InitialRefractiveIndex)
-            #         )  # Grating period
             else:
                 raise ValueError(f"{strain_type} is not a valid strain_type")
 
