@@ -273,12 +273,11 @@ class OsaSimulator:
             Dictionary containing the undeformed reflection spectrum with keys 'wavelength' and 'reflec'.
         """
         reflection_spectrum = {"wavelength": [], "reflec": []}
-
+        # ASSUMPTION: all columns have the same length
+        M = len(self.fbg["FBG1"]["x"])
         # Cycle through all the FBG sensors using only the periods for this cycle
         for period in self.original_fbg_periods:
             # Number of sections the grating is divided into for the Transfer Matrix
-            # Note: Verify if this needs to be dynamic based on the FBG sensor's data
-            M = 20
             wavelengths = np.arange(self.min_bandwidth, self.max_bandwidth, self.resolution)
 
             for wl in wavelengths:

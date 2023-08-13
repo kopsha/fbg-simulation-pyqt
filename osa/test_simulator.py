@@ -52,7 +52,7 @@ def test_valid_data_from_file(init_params):
     """Compare FBG data with old simulator"""
     units = SiUnits.MILLIMETERS
     ref_sim = OSASimulation(
-        filename="sample/tut-export.txt",
+        filename="sample/tut-export-limited.txt",
         NumberFBG=init_params["fbg_count"],
         FBGLength=init_params["fbg_length"],
         Tolerance=init_params["tolerance"],
@@ -63,7 +63,7 @@ def test_valid_data_from_file(init_params):
     ref_data = ref_sim.FBGArray
 
     simu = OsaSimulator(**init_params)
-    data = simu.from_file("sample/tut-export.txt", units=units)
+    data = simu.from_file("sample/tut-export-limited.txt", units=units)
     assert_fbg_equals(ref_data, data)
 
 
@@ -71,7 +71,7 @@ def test_undeformed_fbg(init_params):
     units = SiUnits.MILLIMETERS
     ## Prepare reference simulation
     ref_sim = OSASimulation(
-        filename="sample/tut-export.txt",
+        filename="sample/tut-export-limited.txt",
         NumberFBG=init_params["fbg_count"],
         FBGLength=init_params["fbg_length"],
         Tolerance=init_params["tolerance"],
@@ -95,7 +95,7 @@ def test_undeformed_fbg(init_params):
 
     ## Prepare simulation to be tested
     simu = OsaSimulator(**init_params)
-    simu.from_file("sample/tut-export.txt", units=units)
+    simu.from_file("sample/tut-export-limited.txt", units=units)
     data = simu.undeformed_fbg()
 
     ## Compare results
@@ -109,7 +109,7 @@ def test_deformed_fbg(init_params):
 
     ## Prepare reference simulation
     ref_sim = OSASimulation(
-        filename="sample/tut-export.txt",
+        filename="sample/tut-export-limited.txt",
         NumberFBG=init_params["fbg_count"],
         FBGLength=init_params["fbg_length"],
         Tolerance=init_params["tolerance"],
@@ -141,7 +141,7 @@ def test_deformed_fbg(init_params):
 
     ## Prepare simulation to be tested
     simu = OsaSimulator(**init_params)
-    simu.from_file("sample/tut-export.txt", units=units)
+    simu.from_file("sample/tut-export-limited.txt", units=units)
     data = simu.deformed_fbg(
         strain_type=StrainTypes.NON_UNIFORM,
         stress_type=StressTypes.INCLUDED,
