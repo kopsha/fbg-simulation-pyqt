@@ -120,8 +120,7 @@ class OsaSimulator:
         self.original_wavelengths = np.array(original_wavelengths, dtype=np.float64)
         self.grating_periods = self.original_wavelengths[: self.fbg_count] / (2.0 * initial_refractive_index)
         self.original_fbg_periods = [
-            wavelen / (2.0 * self.initial_refractive_index)
-            for wavelen in self.original_wavelengths
+            wavelen / (2.0 * self.initial_refractive_index) for wavelen in self.original_wavelengths
         ]
 
         self.directional_refractive_p11 = directional_refractive_p11
@@ -138,7 +137,6 @@ class OsaSimulator:
         self.fiber_expansion_coefficient = fiber_expansion_coefficient
         self.host_expansion_coefficient = host_expansion_coefficient
         self.youngs_mod = youngs_mod
-
 
     def from_file(self, filepath: str, units=SiUnits.MILLIMETERS) -> dict:
         """
@@ -165,9 +163,7 @@ class OsaSimulator:
             S33=dict(format="f8", divide=(10**6) if from_meters else 1),
             T=dict(format="f8"),
         )
-        dtypes = dict(
-            names=list(fields.keys()), formats=[v["format"] for v in fields.values()]
-        )
+        dtypes = dict(names=list(fields.keys()), formats=[v["format"] for v in fields.values()])
         raw_data = np.genfromtxt(filepath, dtypes, comments="%")
 
         fbg = dict()
@@ -267,7 +263,6 @@ class OsaSimulator:
 
         return trx_mat
 
-
     def undeformed_fbg(self) -> dict:
         """
         Calculate the undeformed (original) reflection spectrum of the FBG.
@@ -277,10 +272,7 @@ class OsaSimulator:
         dict
             Dictionary containing the undeformed reflection spectrum with keys 'wavelength' and 'reflec'.
         """
-        reflection_spectrum = {
-            'wavelength': [],
-            'reflec': []
-        }
+        reflection_spectrum = {"wavelength": [], "reflec": []}
 
         # Cycle through all the FBG sensors using only the periods for this cycle
         for period in self.original_fbg_periods:
@@ -333,7 +325,8 @@ class OsaSimulator:
         # Compute the thermo-dynamic part
         thermo_dynamic_effect = (
             self.fiber_expansion_coefficient
-            + (1 - self.photo_elastic_param) * (self.host_expansion_coefficient - self.fiber_expansion_coefficient)
+            + (1 - self.photo_elastic_param)
+            * (self.host_expansion_coefficient - self.fiber_expansion_coefficient)
             + self.thermo_optic
         )
 
@@ -373,30 +366,46 @@ class OsaSimulator:
             self.dneff_z = np.zeros(M)
             if stress_type == StressTypes.INCLUDED:
                 coef = -(self.initial_refractive_index**3.0) / (2 * self.youngs_mod)
-                factor1 = self.directional_refractive_p11 - 2 * self.poissons_coefficient * self.directional_refractive_p12
-                factor2 = (1 - self.poissons_coefficient) * self.directional_refractive_p12 - self.poissons_coefficient * self.directional_refractive_p11
-                self.dneff_y = coef * (factor1 * sensor_data["S22"] + factor2 * (sensor_data["S33"] + sensor_data["S11"]))
-                self.dneff_z = coef * (factor1 * sensor_data["S33"] + factor2 * (sensor_data["S22"] + sensor_data["S11"]))
+                factor1 = (
+                    self.directional_refractive_p11
+                    - 2 * self.poissons_coefficient * self.directional_refractive_p12
+                )
+                factor2 = (
+                    (1 - self.poissons_coefficient) * self.directional_refractive_p12
+                    - self.poissons_coefficient * self.directional_refractive_p11
+                )
+                self.dneff_y = coef * (
+                    factor1 * sensor_data["S22"] + factor2 * (sensor_data["S33"] + sensor_data["S11"])
+                )
+                self.dneff_z = coef * (
+                    factor1 * sensor_data["S33"] + factor2 * (sensor_data["S22"] + sensor_data["S11"])
+                )
             elif stress_type != StressTypes.NONE:
                 raise ValueError(f"Invalid stress_type: {stress_type}.")
 
             # Simulate for Y and Z waves
             wavelengths = np.arange(self.min_bandwidth, self.max_bandwidth, self.resolution)
             for wl in wavelengths:
-                transfer_mat_y = self.transfer_matrix(count=M, use_period=fbg_period, wavelen=wl, use_dneff=self.dneff_y)
-                PO_y, NO_y = transfer_mat_y[0, 0], transfer_mat_y[1, 0]
+                trx_y = self.transfer_matrix(
+                    count=M, use_period=fbg_period, wavelen=wl, use_dneff=self.dneff_y
+                )
+                PO_y, NO_y = trx_y[0, 0], trx_y[1, 0]
                 reflectivity_y = abs(NO_y / PO_y) ** 2
                 y_reflection["wavelength"].append(wl)
                 y_reflection["reflec"].append(reflectivity_y)
 
-                transfer_mat_z = self.transfer_matrix(count=M, use_period=fbg_period, wavelen=wl, use_dneff=self.dneff_z)
-                PO_z, NO_z = transfer_mat_z[0, 0], transfer_mat_z[1, 0]
+                trx_z = self.transfer_matrix(
+                    count=M, use_period=fbg_period, wavelen=wl, use_dneff=self.dneff_z
+                )
+                PO_z, NO_z = trx_z[0, 0], trx_z[1, 0]
                 reflectivity_z = abs(NO_z / PO_z) ** 2
                 z_reflection["wavelength"].append(wl)
                 z_reflection["reflec"].append(reflectivity_z)
 
         # Combine the Y and Z wave reflections
         combined_reflection["wavelength"] = y_reflection["wavelength"]
-        combined_reflection["reflec"] = np.add(np.divide(y_reflection["reflec"], 2.0), np.divide(z_reflection["reflec"], 2.0))
+        combined_reflection["reflec"] = np.add(
+            np.divide(y_reflection["reflec"], 2.0), np.divide(z_reflection["reflec"], 2.0)
+        )
 
         return combined_reflection

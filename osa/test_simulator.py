@@ -24,7 +24,7 @@ def init_params():
         resolution=0.05,
         min_bandwidth=1500.0,
         max_bandwidth=1600.0,
-        mean_change_refractive_index=4.5E-4,
+        mean_change_refractive_index=4.5e-4,
         fringe_visibility=np.float64(1),
         emulate_temperature=293.15,  # 373.15,
         original_wavelengths=[1500.0, 1525.0, 1550.0, 1575.0, 1600.0],
