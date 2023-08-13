@@ -328,35 +328,31 @@ class OsaSimulator:
             else:
                 raise ValueError(f"{strain_type} is not a valid stress_type.")
 
-            ## Simulation
-
-            # YWave
+            ## Simulation - YWave
             for wl in np.arange(
                 self.min_bandwidth, self.max_bandwidth, self.resolution
-            ):  # Wavelength cycle (Here the simulation resolution is used)
+            ):
                 f1 = self.transfer_matrix(
                     count=M, use_period=fbg_period, wavelen=wl, use_dneff=self.dneff_y
                 )
-                # Add to the Reflection file - YWave
                 PO = f1[0, 0]
                 NO = f1[1, 0]
                 REF = abs(NO / PO) ** 2
-                y_reflect["wavelength"].append(wl)  # Output File
-                y_reflect["reflec"].append(REF)  # Output File
+                y_reflect["wavelength"].append(wl)
+                y_reflect["reflec"].append(REF)
 
-            # ZWave
+            ## Simulation - ZWave
             for wl in np.arange(
                 self.min_bandwidth, self.max_bandwidth, self.resolution
-            ):  # Wavelength cycle (Here the simulation resolution is used)
+            ):
                 f1 = self.transfer_matrix(
                     count=M, use_period=fbg_period, wavelen=wl, use_dneff=self.dneff_z
                 )
-                # Add to the Reflection file - YWave
                 PO = f1[0, 0]
                 NO = f1[1, 0]
                 REF = abs(NO / PO) ** 2
-                z_reflect["wavelength"].append(wl)  # Output File
-                z_reflect["reflec"].append(REF)  # Output File
+                z_reflect["wavelength"].append(wl)
+                z_reflect["reflec"].append(REF)
 
         # Halve the amplitude of each of the y and z waves, then sum to find composite wave.
         d_reflect["wavelength"] = y_reflect["wavelength"]

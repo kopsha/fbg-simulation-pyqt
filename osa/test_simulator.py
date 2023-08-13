@@ -147,7 +147,11 @@ def test_deformed_fbg(init_params):
         stress_type=StressTypes.INCLUDED,
     )
 
-    assert data["wavelength"] == ref_data["wavelength"]
-    assert data["reflec"] == ref_data["reflec"]
+    print(data["wavelength"][:15], "vs")
+    print(ref_data["wavelength"][:15])
 
-    assert False
+    print(data["reflec"][:15], "vs")
+    print(ref_data["reflec"][:15])
+
+    assert data["wavelength"] == ref_data["wavelength"]
+    assert np.array_equal(data["reflec"], ref_data["reflec"])
