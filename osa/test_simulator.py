@@ -28,6 +28,11 @@ def init_params():
         fringe_visibility=np.float64(1),
         emulate_temperature=293.15,  # 373.15,
         original_wavelengths=[1500.0, 1525.0, 1550.0, 1575.0, 1600.0],
+        ambient_temperature=293.15,
+        thermo_optic=8.3e-6,
+        fiber_expansion_coefficient=10e-6,  # Internet says 0.5E-6 to 1E-6
+        host_expansion_coefficient=10e-6,
+        youngs_mod=75e9,
     )
     return params
 
@@ -64,6 +69,7 @@ def test_valid_data_from_file(init_params):
 
 def test_undeformed_fbg(init_params):
     units = SiUnits.MILLIMETERS
+    ## Prepare reference simulation
     ref_sim = OSASimulation(
         filename="sample/tut-export.txt",
         NumberFBG=init_params["fbg_count"],
@@ -73,10 +79,6 @@ def test_undeformed_fbg(init_params):
         FBGPosition=init_params["fbg_positions"],
         InputUnits=units,  # 0 -> meters, 1 -> mm
     )
-
-    simu = OsaSimulator(**init_params)
-    simu.from_file("sample/tut-export.txt", units=units)
-
     ref_sim.UndeformedFBG(
         SimulationResolution=init_params["resolution"],
         MinBandWidth=init_params["min_bandwidth"],
@@ -91,8 +93,12 @@ def test_undeformed_fbg(init_params):
     )
     ref_data = ref_sim.OReflect
 
+    ## Prepare simulation to be tested
+    simu = OsaSimulator(**init_params)
+    simu.from_file("sample/tut-export.txt", units=units)
     data = simu.undeformed_fbg()
 
+    ## Compare results
     assert data["wavelength"] == ref_data["wavelength"]
     assert data["reflec"] == ref_data["reflec"]
 
@@ -101,6 +107,7 @@ def test_deformed_fbg(init_params):
     # initial params
     units = SiUnits.MILLIMETERS
 
+    ## Prepare reference simulation
     ref_sim = OSASimulation(
         filename="sample/tut-export.txt",
         NumberFBG=init_params["fbg_count"],
@@ -110,20 +117,37 @@ def test_deformed_fbg(init_params):
         FBGPosition=init_params["fbg_positions"],
         InputUnits=units,  # 0 -> meters, 1 -> mm
     )
+    ref_sim.DeformedFBG(
+        SimulationResolution=init_params["resolution"],
+        MinBandWidth=init_params["min_bandwidth"],
+        MaxBandWidth=init_params["max_bandwidth"],
+        AmbientTemperature=init_params["ambient_temperature"],
+        InitialRefractiveIndex=init_params["initial_refractive_index"],
+        MeanChangeRefractiveIndex=init_params["mean_change_refractive_index"],
+        FringeVisibility=init_params["fringe_visibility"],
+        DirectionalRefractiveP11=init_params["directional_refractive_p11"],
+        DirectionalRefractiveP12=init_params["directional_refractive_p12"],
+        YoungsModule=init_params["youngs_mod"],
+        PoissonsCoefficient=init_params["poissons_coefficient"],
+        ThermoOptic=init_params["thermo_optic"],
+        EmulateTemperature=init_params["emulate_temperature"],
+        FiberThermalExpansionCoefficient=init_params["fiber_expansion_coefficient"],
+        HostThermalExpansionCoefficient=init_params["host_expansion_coefficient"],
+        FBGOriginalWavel=init_params["original_wavelengths"],
+        StrainType=StrainTypes.NON_UNIFORM,
+        StressType=StressTypes.INCLUDED,
+    )
+    ref_data = ref_sim.DReflect
 
+    ## Prepare simulation to be tested
     simu = OsaSimulator(**init_params)
     simu.from_file("sample/tut-export.txt", units=units)
-
     data = simu.deformed_fbg(
         strain_type=StrainTypes.NON_UNIFORM,
-        ambient_temperature=293.15,
-        thermo_optic=8.3e-6,
-        fiber_expansion_coefficient=10e-6,  # Internet says 0.5E-6 to 1E-6
-        host_expansion_coefficient=10e-6,
         stress_type=StressTypes.INCLUDED,
-        youngs_mod=75e9,
     )
 
-    print("results:", data[:5])
+    assert data["wavelength"] == ref_data["wavelength"]
+    assert data["reflec"] == ref_data["reflec"]
 
     assert False

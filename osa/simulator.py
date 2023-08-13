@@ -22,6 +22,7 @@ class StressTypes(IntEnum):
     NONE = 0
     INCLUDED = 1
 
+
 class OsaSimulator:
     def __init__(
         self,
@@ -40,6 +41,11 @@ class OsaSimulator:
         max_bandwidth: float,
         mean_change_refractive_index: float,
         fringe_visibility: float,
+        ambient_temperature: float,
+        thermo_optic: float,
+        fiber_expansion_coefficient: float,
+        host_expansion_coefficient: float,
+        youngs_mod: float,
     ):
         """
         Prepares an OSA simulation, with following parameters:
@@ -58,6 +64,11 @@ class OsaSimulator:
         :param float min_bandwidth: Light Minimum Bandwidth
         :param float max_bandwidth: Light Maxumum Bandwidth
         :param float fringe_visibility: Fringe Visibility (FV)
+        :param float ambient_temperature: Base in which our reference temperature is set.
+        :param float thermo_optic: Thermo optic coefficient of fiber
+        :param float fiber_expansion_coefficient: Thermal expansion coefficient of fiber material
+        :param float host_expansion_coefficient : Thermal expansion coefficient of host material
+        :param float youngs_mod: Young's modulus of fiber
 
         NB: Everything in this class will be expressed in (mm)
         """
@@ -88,6 +99,11 @@ class OsaSimulator:
         self.max_bandwidth = max_bandwidth
         self.fringe_visibility = fringe_visibility
 
+        self.ambient_temperature = ambient_temperature
+        self.thermo_optic = thermo_optic
+        self.fiber_expansion_coefficient = fiber_expansion_coefficient
+        self.host_expansion_coefficient = host_expansion_coefficient
+        self.youngs_mod = youngs_mod
 
     def from_file(self, filepath: str, units=SiUnits.MILLIMETERS):
         """
@@ -131,7 +147,9 @@ class OsaSimulator:
         return fbg
 
     def sigma(self, period, wavelen, dneff):
-        first = (1.0 / wavelen) - (1.0 / (2.0 * (self.initial_refractive_index + dneff) * period))
+        first = (1.0 / wavelen) - (
+            1.0 / (2.0 * (self.initial_refractive_index + dneff) * period)
+        )
         second = 2.0 * pi * self.mean_change_refractive_index / wavelen
         result = 2.0 * pi * (self.initial_refractive_index + dneff) * first + second
         return result
@@ -173,7 +191,9 @@ class OsaSimulator:
         for period in self.original_fbg_periods:
             # Q: Is this right, maybe it should be len(self.fbg[key]["x"])?
             M = 20  # Sections the gratting is divided -- Transfer Matrix
-            for wl in np.arange(self.min_bandwidth, self.max_bandwidth, self.resolution):
+            for wl in np.arange(
+                self.min_bandwidth, self.max_bandwidth, self.resolution
+            ):
                 f1 = self.transfer_matrix(count=M, use_period=period, wavelen=wl)
                 PO = f1[0, 0]
                 NO = f1[1, 0]
@@ -187,21 +207,11 @@ class OsaSimulator:
     def deformed_fbg(
         self,
         strain_type: StrainTypes,
-        ambient_temperature: float,
-        thermo_optic: float,
-        fiber_expansion_coefficient: float,
-        host_expansion_coefficient: float,
         stress_type: StrainTypes,
-        youngs_mod: float,
     ):
         """
         :param IntEnum strain_type: 0 for none, 1 for uniform, 2 for non-uniform
-        :param float ambient_temperature: Base in which our reference temperature is set.
-        :param float thermo_optic: Thermo optic coefficient of fiber
-        :param float fiber_expansion_coefficient: Thermal expansion coefficient of fiber material
-        :param float host_expansion_coefficient : Thermal expansion coefficient of host material
         :param IntEnum stress_type: Traverse stress 0 for none, 1 for included
-        :param float youngs_mod: Young's modulus of fiber
         """
         # Calculate photoelastic coef from directional coefs.
         self.photo_elastic_param = (self.initial_refractive_index**2 / 2) * (
@@ -217,33 +227,34 @@ class OsaSimulator:
                 self.fbg[key]["T"][:] = self.emulate_temperature
 
         # Two waves (individual contributions to account for any transverse stress)
-        self.y_reflect = dict(
+        y_reflect = dict(
             wavelength=list(),
             reflec=list(),
         )
-        self.z_reflect = dict(
+        z_reflect = dict(
             wavelength=list(),
             reflec=list(),
         )
         # Composite wave of Y and Z contributions
-        self.d_reflect = dict(
+        d_reflect = dict(
             wavelength=list(),
             reflec=list(),
         )
 
         # Compute the thermo-dynamic part, as it's used in multiple strain type conditions
         thermo_dynamic_part = (
-            fiber_expansion_coefficient
+            self.fiber_expansion_coefficient
             + (1 - self.photo_elastic_param)
-            * (host_expansion_coefficient - fiber_expansion_coefficient)
-            + thermo_optic
+            * (self.host_expansion_coefficient - self.fiber_expansion_coefficient)
+            + self.thermo_optic
         )
 
         # Cycle all the FBG sensors
         for i in range(self.fbg_count):
-            fbg_sensor = self.fbg[f"FBG{i+1}"]  # This fetches the FBG array for the current i value
+            fbg_sensor = self.fbg[
+                f"FBG{i+1}"
+            ]  # This fetches the FBG array for the current i value
             M = len(fbg_sensor["x"])  # Sections the gratting is divided
-            deltz = (self.fbg_length * (10.0**6)) / M  # FBG increment size (nm)
 
             ## Strain
             fbg_period = []
@@ -258,7 +269,7 @@ class OsaSimulator:
                 new_wavelength = self.original_wavelengths[i] * (
                     1
                     + (1 - self.photo_elastic_param) * strain_mean
-                    + thermo_dynamic_part * (temp_mean - ambient_temperature)
+                    + thermo_dynamic_part * (temp_mean - self.ambient_temperature)
                 )
                 fbg_period = [
                     new_wavelength / (2.0 * self.initial_refractive_index)
@@ -273,7 +284,7 @@ class OsaSimulator:
                         1
                         + (1 - self.photo_elastic_param) * fbg_sensor["LE11"][j]
                         + thermo_dynamic_part
-                        * (fbg_sensor["T"][j] - ambient_temperature)
+                        * (fbg_sensor["T"][j] - self.ambient_temperature)
                     )
                     / (2.0 * self.initial_refractive_index)
                     for j in range(M)
@@ -290,13 +301,27 @@ class OsaSimulator:
 
             if stress_type == StressTypes.INCLUDED:  # included transverse stress
                 # --- Case of "included transverse stress" ---
-                multiplier = -(self.initial_refractive_index**3.0) / (2 * youngs_mod)
-                factor1 = self.directional_refractive_p11 - 2 * self.poissons_coefficient * self.directional_refractive_p12
-                factor2 = (1 - self.poissons_coefficient) * self.directional_refractive_p12 - self.poissons_coefficient * self.directional_refractive_p11
+                multiplier = -(self.initial_refractive_index**3.0) / (
+                    2 * self.youngs_mod
+                )
+                factor1 = (
+                    self.directional_refractive_p11
+                    - 2 * self.poissons_coefficient * self.directional_refractive_p12
+                )
+                factor2 = (
+                    (1 - self.poissons_coefficient) * self.directional_refractive_p12
+                    - self.poissons_coefficient * self.directional_refractive_p11
+                )
                 # Using broadcasting for dneff_y
-                self.dneff_y = multiplier * (factor1 * fbg_sensor[direc_y] + factor2 * (fbg_sensor[direc_z] + fbg_sensor[direc_x]))
+                self.dneff_y = multiplier * (
+                    factor1 * fbg_sensor[direc_y]
+                    + factor2 * (fbg_sensor[direc_z] + fbg_sensor[direc_x])
+                )
                 # Using broadcasting for dneff_z
-                self.dneff_z = multiplier * (factor1 * fbg_sensor[direc_z] + factor2 * (fbg_sensor[direc_y] + fbg_sensor[direc_x]))
+                self.dneff_z = multiplier * (
+                    factor1 * fbg_sensor[direc_z]
+                    + factor2 * (fbg_sensor[direc_y] + fbg_sensor[direc_x])
+                )
             elif stress_type == StressTypes.NONE:
                 # nothing to do here, array is already initialized with zeros
                 pass
@@ -306,23 +331,37 @@ class OsaSimulator:
             ## Simulation
 
             # YWave
-            for wl in np.arange(self.min_bandwidth, self.max_bandwidth, self.resolution):  # Wavelength cycle (Here the simulation resolution is used)
-                f1 = self.transfer_matrix(count=M, use_period=fbg_period, wavelen=wl, use_dneff=self.dneff_y)
+            for wl in np.arange(
+                self.min_bandwidth, self.max_bandwidth, self.resolution
+            ):  # Wavelength cycle (Here the simulation resolution is used)
+                f1 = self.transfer_matrix(
+                    count=M, use_period=fbg_period, wavelen=wl, use_dneff=self.dneff_y
+                )
                 # Add to the Reflection file - YWave
                 PO = f1[0, 0]
                 NO = f1[1, 0]
                 REF = abs(NO / PO) ** 2
-                self.y_reflect["wavelength"].append(wl)  # Output File
-                self.y_reflect["reflec"].append(REF)  # Output File
+                y_reflect["wavelength"].append(wl)  # Output File
+                y_reflect["reflec"].append(REF)  # Output File
 
             # ZWave
-            for wl in np.arange(self.min_bandwidth, self.max_bandwidth, self.resolution):  # Wavelength cycle (Here the simulation resolution is used)
-                f1 = self.transfer_matrix(count=M, use_period=fbg_period, wavelen=wl, use_dneff=self.dneff_z)
+            for wl in np.arange(
+                self.min_bandwidth, self.max_bandwidth, self.resolution
+            ):  # Wavelength cycle (Here the simulation resolution is used)
+                f1 = self.transfer_matrix(
+                    count=M, use_period=fbg_period, wavelen=wl, use_dneff=self.dneff_z
+                )
                 # Add to the Reflection file - YWave
                 PO = f1[0, 0]
                 NO = f1[1, 0]
                 REF = abs(NO / PO) ** 2
-                self.y_reflect["wavelength"].append(wl)  # Output File
-                self.y_reflect["reflec"].append(REF)  # Output File
+                z_reflect["wavelength"].append(wl)  # Output File
+                z_reflect["reflec"].append(REF)  # Output File
 
-        return []
+        # Halve the amplitude of each of the y and z waves, then sum to find composite wave.
+        d_reflect["wavelength"] = y_reflect["wavelength"]
+        half_y = np.divide(y_reflect["reflec"], 2.0)
+        half_z = np.divide(z_reflect["reflec"], 2.0)
+        d_reflect["reflec"] = np.add(half_y, half_z)
+
+        return d_reflect
