@@ -138,6 +138,18 @@ class OsaSimulator:
         self.host_expansion_coefficient = host_expansion_coefficient
         self.youngs_mod = youngs_mod
 
+        self._compute_photo_elastic_coefficient()
+
+    def _compute_photo_elastic_coefficient(self):
+        """
+        Calculate photoelastic coefficient from directional coefficients.
+        """
+        self.photo_elastic_param = (self.initial_refractive_index**2 / 2) * (
+            self.directional_refractive_p12
+            - self.poissons_coefficient
+            * (self.directional_refractive_p11 + self.directional_refractive_p12)
+        )
+
     def from_file(self, filepath: str, units=SiUnits.MILLIMETERS) -> dict:
         """
         Loads FBG data from a text file.
@@ -306,12 +318,6 @@ class OsaSimulator:
         dict
             Dictionary containing the deformed reflection spectrum with keys 'wavelength' and 'reflec'.
         """
-        # Calculate photoelastic coefficient from directional coefficients.
-        self.photo_elastic_param = (self.initial_refractive_index**2 / 2) * (
-            self.directional_refractive_p12
-            - self.poissons_coefficient * (self.directional_refractive_p11 + self.directional_refractive_p12)
-        )
-
         # Apply a theoretical temperature value if specified
         if self.emulate_temperature != -1.0:
             for i in range(self.fbg_count):
@@ -408,3 +414,228 @@ class OsaSimulator:
         )
 
         return combined_reflection
+
+    def _compute_strain_stats(self):
+        """
+        Calculates statistics related to strain and stress for each FBG sensor.
+
+        For each FBG sensor, the function computes the average, maximum, and minimum
+        values for different strain and stress types (LE11, LE22, LE33, S11, S22, S33, T).
+
+        Returns
+        -------
+        dict
+            A dictionary with the computed statistics for each FBG sensor.
+        """
+
+        stat_types = ["AV", "Max", "Min"]
+        measures = ["LE11", "LE22", "LE33", "S11", "S22", "S33", "T"]
+        operations = {"AV": np.mean, "Max": np.max, "Min": np.min}
+
+        stats_dict = {
+            f"FBG{i+1}": {
+                f"{stat}-{measure}": operations[stat](self.fbg[f"FBG{i+1}"][measure])
+                if not (stat == "AV" and measure == "T" and self.emulate_temperature != -1.0)
+                else self.emulate_temperature
+                for measure in measures
+                for stat in stat_types
+            }
+            for i in range(self.fbg_count)
+        }
+
+        return stats_dict
+
+    def fbg_output_sum(self, strain_type: StrainTypes, stress_type: StressTypes):
+        """
+        Parameters
+        ----------
+        strain_type : StrainTypes
+            Type of strain to consider: NONE, UNIFORM, or NON_UNIFORM.
+        stress_type : StressTypes
+            Type of stress to consider: NONE or INCLUDED.
+        """
+        fbg_stats = self._compute_strain_stats()
+        # Using only FBG longitudinal direction (xx)
+        av_strain_xx = "AV-LE11"
+        max_strain_xx = "Max-LE11"
+        min_strain_xx = "Min-LE11"
+        av_stress_zz = "AV-S33"
+        av_stress_yy = "AV-S22"
+        av_temperature = "AV-T"
+
+        # fixed component: Transverse stress"""
+        fce = (
+            (
+                (1 + self.poissons_coefficient) * self.directional_refractive_p12
+                - (1 + self.poissons_coefficient) * self.directional_refractive_p11
+            )
+            * self.initial_refractive_index**3
+        ) / self.youngs_mod
+
+        output = {
+            f"FBG{i+1}": {"wave_shift": [], "wave_width": []}
+            for i in range(self.fbg_count)
+        }
+
+        for i in range(self.fbg_count):
+            key = f"FBG{i+1}"
+            # --- STRAIN ---
+            if strain_type == StrainTypes.NONE:
+                # --- Case of "no longitudinal strain" ---
+                # --------Wavelength Shift Calculation----------------------
+                WavlShift = self.original_wavelengths[i] * (
+                    (self.thermo_optic)
+                    * (
+                        fbg_stats[key][av_temperature]
+                        - self.ambient_temperature
+                    )
+                )  # weavelength due to temp
+                output[key]["wave_shift"].append(WavlShift)
+
+                graperiodmax = graperiodmin = (
+                    self.original_wavelengths[i]
+                    / (2 * self.initial_refractive_index)
+                    * (
+                        1
+                        + (self.thermo_optic)
+                        * (
+                            fbg_stats[key][av_temperature]
+                            - self.ambient_temperature
+                        )
+                    )
+                )
+                PeakWV1 = 0
+
+            elif strain_type == StrainTypes.UNIFORM:
+                # --- Case of "uniform longitudinal strain"
+
+                # --------Wavelength Shift Calculation----------------------
+                WavlShift = self.original_wavelengths[i] * (
+                    (1 - self.photo_elastic_param)
+                    * fbg_stats[key][av_strain_xx]
+                    + (
+                        self.fiber_expansion_coefficient
+                        + (1 - self.photo_elastic_param)
+                        * (
+                            self.host_expansion_coefficient
+                            - self.fiber_expansion_coefficient
+                        )
+                        + self.thermo_optic
+                    )
+                    * (
+                        fbg_stats[key][av_temperature]
+                        - self.ambient_temperature
+                    )
+                )  # weavelength at uniform strain and temperature
+                output[key]["wave_shift"].append(WavlShift)
+
+                self.graperiodmax = self.graperiodmin = (
+                    self.original_wavelengths[i]
+                    / (2 * self.initial_refractive_index)
+                    * (
+                        1
+                        + (1 - self.photo_elastic_param)
+                        * fbg_stats[key][av_strain_xx]
+                        + (self.thermo_optic)
+                        * (
+                            fbg_stats[key][av_temperature]
+                            - self.ambient_temperature
+                        )
+                    )
+                )
+                PeakWV1 = 0
+
+            else:
+                # --- Case of "non-uniform longitudinal strain"---
+
+                # --------Wavelength Shift Calculation----------------------
+                WavlShift = self.FBGOriginalWavel[b] * (
+                    (1 - self.PhotoElasticParam)
+                    * FBGmaxmin["FBG" + str(b + 1)][AVStrainDirection]
+                    + (
+                        self.FiberThermalExpansionCoefficient
+                        + (1 - self.PhotoElasticParam)
+                        * (
+                            self.HostThermalExpansionCoefficient
+                            - self.FiberThermalExpansionCoefficient
+                        )
+                        + self.ThermoOptic
+                    )
+                    * (
+                        FBGmaxmin["FBG" + str(b + 1)][AVTemperature]
+                        - self.AmbientTemperature
+                    )
+                )  # weavelength at uniform strain and temperature
+                self.FBGOutSum["FBG" + str(b + 1)]["WaveShift"].append(WavlShift)
+
+                # --- Variation of the peak width: Non-uniform strain contribution and temperature ----
+                # Grating period caused by maximum strain
+                self.graperiodmax = (
+                    self.FBGOriginalWavel[b]
+                    / (2 * self.InitialRefractiveIndex)
+                    * (
+                        1
+                        + (1 - self.PhotoElasticParam)
+                        * FBGmaxmin["FBG" + str(b + 1)][MaxStrainDirection]
+                        + (self.ThermoOptic)
+                        * (
+                            FBGmaxmin["FBG" + str(b + 1)][AVTemperature]
+                            - self.AmbientTemperature
+                        )
+                    )
+                )
+                # Grating period caused by minimum strain
+                self.graperiodmin = (
+                    self.FBGOriginalWavel[b]
+                    / (2 * self.InitialRefractiveIndex)
+                    * (
+                        1
+                        + (1 - self.PhotoElasticParam)
+                        * FBGmaxmin["FBG" + str(b + 1)][MinStrainDirection]
+                        + (self.ThermoOptic)
+                        * (
+                            FBGmaxmin["FBG" + str(b + 1)][AVTemperature]
+                            - self.AmbientTemperature
+                        )
+                    )
+                )
+                # Peak width variation
+                PeakWV1 = (
+                    2
+                    * self.InitialRefractiveIndex
+                    * (self.graperiodmax - self.graperiodmin)
+                )
+
+            # --- STRESS ---
+            if StressType == 0:
+                # --- Case of "no transverse stress" ---
+                PeakWV2 = 0
+            else:
+                # ---Variation of the peak width: Transverse stress contribution----
+                PeakWV2 = (
+                    abs(
+                        FBGmaxmin["FBG" + str(b + 1)][AVStresszzDirection]
+                        - FBGmaxmin["FBG" + str(b + 1)][AVStressyyDirection]
+                    )
+                    * (self.FBGOriginalWavel[b] / (2 * self.InitialRefractiveIndex))
+                    * fce
+                )
+
+            # Add Both contributions
+            PeakWV = PeakWV1 + PeakWV2
+            self.FBGOutSum["FBG" + str(b + 1)]["WaveWidth"].append(PeakWV)
+
+            print(
+                "FBG "
+                + str(b)
+                + " | Grating period max: "
+                + str(self.graperiodmax)
+                + " | Grating period min: "
+                + str(self.graperiodmin)
+                + "| Waveshift: "
+                + str(self.FBGOutSum["FBG" + str(b + 1)]["WaveShift"])
+                + " | PeakWV1: "
+                + str(PeakWV1)
+                + " | PeakWV2: "
+                + str(PeakWV2)
+            )
