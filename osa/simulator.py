@@ -95,19 +95,30 @@ class OsaSimulator:
         ----
         Everything in this class will be expressed in (mm).
         """
-        self.data = None
+
         self.fbg_count = int(fbg_count)
         self.fbg_length = np.float64(fbg_length)
         self.tolerance = np.float64(tolerance)
         self.fbg_positions = np.array(fbg_positions, dtype=np.float64)
-        self.initial_refractive_index = initial_refractive_index
-        self.mean_change_refractive_index = mean_change_refractive_index
+        self.initial_refractive_index = np.float64(initial_refractive_index)
+        self.mean_change_refractive_index = np.float64(mean_change_refractive_index)
+        self.directional_refractive_p11 = np.float64(directional_refractive_p11)
+        self.directional_refractive_p12 = np.float64(directional_refractive_p12)
+        self.poissons_coefficient = np.float64(poissons_coefficient)
+        self.emulate_temperature = np.float64(emulate_temperature)
+        self.resolution = np.float64(resolution)
+        self.min_bandwidth = np.float64(min_bandwidth)
+        self.max_bandwidth = np.float64(max_bandwidth)
+        self.fringe_visibility = np.float64(fringe_visibility)
+        self.ambient_temperature = np.float64(ambient_temperature)
+        self.thermo_optic = np.float64(thermo_optic)
+        self.fiber_expansion_coefficient = np.float64(fiber_expansion_coefficient)
+        self.host_expansion_coefficient = np.float64(host_expansion_coefficient)
+        self.youngs_mod = np.float64(youngs_mod)
 
         assert len(original_wavelengths) == self.fbg_count
-        self.original_wavelengths = np.array(original_wavelengths)
-        self.APFBG = self.original_wavelengths[: self.fbg_count] / (
-            2.0 * initial_refractive_index
-        )
+        self.original_wavelengths = np.array(original_wavelengths, dtype=np.float64)
+        self.grating_periods = self.original_wavelengths[: self.fbg_count] / (2.0 * initial_refractive_index)
         self.original_fbg_periods = [
             wavelen / (2.0 * self.initial_refractive_index)
             for wavelen in self.original_wavelengths
@@ -333,7 +344,7 @@ class OsaSimulator:
 
             # Determine the FBG grating period based on the strain type
             if strain_type == StrainTypes.NONE:
-                fbg_period = [self.APFBG[i] for _ in range(M)]
+                fbg_period = [self.grating_periods[i] for _ in range(M)]
             elif strain_type == StrainTypes.UNIFORM:
                 strain_avg = np.mean(sensor_data["LE11"])
                 temp_avg = np.mean(sensor_data["T"])
