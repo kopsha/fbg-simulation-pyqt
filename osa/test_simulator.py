@@ -147,11 +147,52 @@ def test_deformed_fbg(init_params):
         stress_type=StressTypes.INCLUDED,
     )
 
-    print(data["wavelength"][:15], "vs")
-    print(ref_data["wavelength"][:15])
-
-    print(data["reflec"][:15], "vs")
-    print(ref_data["reflec"][:15])
-
     assert data["wavelength"] == ref_data["wavelength"]
     assert np.array_equal(data["reflec"], ref_data["reflec"])
+
+
+def test_output_sum(init_params):
+    # initial params
+    units = SiUnits.MILLIMETERS
+
+    ## Prepare reference simulation
+    ref_sim = OSASimulation(
+        filename="sample/tut-export-limited.txt",
+        NumberFBG=init_params["fbg_count"],
+        FBGLength=init_params["fbg_length"],
+        Tolerance=init_params["tolerance"],
+        SkipRow=8,
+        FBGPosition=init_params["fbg_positions"],
+        InputUnits=units,  # 0 -> meters, 1 -> mm
+    )
+    # ref_sim.DeformedFBG(
+    #     SimulationResolution=init_params["resolution"],
+    #     MinBandWidth=init_params["min_bandwidth"],
+    #     MaxBandWidth=init_params["max_bandwidth"],
+    #     AmbientTemperature=init_params["ambient_temperature"],
+    #     InitialRefractiveIndex=init_params["initial_refractive_index"],
+    #     MeanChangeRefractiveIndex=init_params["mean_change_refractive_index"],
+    #     FringeVisibility=init_params["fringe_visibility"],
+    #     DirectionalRefractiveP11=init_params["directional_refractive_p11"],
+    #     DirectionalRefractiveP12=init_params["directional_refractive_p12"],
+    #     YoungsModule=init_params["youngs_mod"],
+    #     PoissonsCoefficient=init_params["poissons_coefficient"],
+    #     ThermoOptic=init_params["thermo_optic"],
+    #     EmulateTemperature=init_params["emulate_temperature"],
+    #     FiberThermalExpansionCoefficient=init_params["fiber_expansion_coefficient"],
+    #     HostThermalExpansionCoefficient=init_params["host_expansion_coefficient"],
+    #     FBGOriginalWavel=init_params["original_wavelengths"],
+    #     StrainType=StrainTypes.NON_UNIFORM,
+    #     StressType=StressTypes.INCLUDED,
+    # )
+    # ref_data = ref_sim.DReflect
+
+    ## Prepare simulation to be tested
+    simu = OsaSimulator(**init_params)
+    simu.from_file("sample/tut-export-limited.txt", units=units)
+    data = simu.fbg_output_sum(
+        strain_type=StrainTypes.NON_UNIFORM,
+        stress_type=StressTypes.INCLUDED,
+    )
+
+    assert False
