@@ -165,27 +165,23 @@ def test_output_sum(init_params):
         FBGPosition=init_params["fbg_positions"],
         InputUnits=units,  # 0 -> meters, 1 -> mm
     )
-    # ref_sim.DeformedFBG(
-    #     SimulationResolution=init_params["resolution"],
-    #     MinBandWidth=init_params["min_bandwidth"],
-    #     MaxBandWidth=init_params["max_bandwidth"],
-    #     AmbientTemperature=init_params["ambient_temperature"],
-    #     InitialRefractiveIndex=init_params["initial_refractive_index"],
-    #     MeanChangeRefractiveIndex=init_params["mean_change_refractive_index"],
-    #     FringeVisibility=init_params["fringe_visibility"],
-    #     DirectionalRefractiveP11=init_params["directional_refractive_p11"],
-    #     DirectionalRefractiveP12=init_params["directional_refractive_p12"],
-    #     YoungsModule=init_params["youngs_mod"],
-    #     PoissonsCoefficient=init_params["poissons_coefficient"],
-    #     ThermoOptic=init_params["thermo_optic"],
-    #     EmulateTemperature=init_params["emulate_temperature"],
-    #     FiberThermalExpansionCoefficient=init_params["fiber_expansion_coefficient"],
-    #     HostThermalExpansionCoefficient=init_params["host_expansion_coefficient"],
-    #     FBGOriginalWavel=init_params["original_wavelengths"],
-    #     StrainType=StrainTypes.NON_UNIFORM,
-    #     StressType=StressTypes.INCLUDED,
-    # )
-    # ref_data = ref_sim.DReflect
+    ref_sim.FBGOutputSum(
+        AmbientTemperature=init_params["ambient_temperature"],
+        InitialRefractiveIndex=init_params["initial_refractive_index"],
+        FringeVisibility=init_params["fringe_visibility"],
+        DirectionalRefractiveP11=init_params["directional_refractive_p11"],
+        DirectionalRefractiveP12=init_params["directional_refractive_p12"],
+        YoungsModule=init_params["youngs_mod"],
+        PoissonsCoefficient=init_params["poissons_coefficient"],
+        ThermoOptic=init_params["thermo_optic"],
+        StrainType=StrainTypes.NON_UNIFORM,
+        StressType=StressTypes.INCLUDED,
+        EmulateTemperature=init_params["emulate_temperature"],
+        FiberThermalExpansionCoefficient=init_params["fiber_expansion_coefficient"],
+        HostThermalExpansionCoefficient=init_params["host_expansion_coefficient"],
+        FBGOriginalWavel=init_params["original_wavelengths"],
+    )
+    ref_data = ref_sim.FBGOutSum
 
     ## Prepare simulation to be tested
     simu = OsaSimulator(**init_params)
@@ -194,5 +190,11 @@ def test_output_sum(init_params):
         strain_type=StrainTypes.NON_UNIFORM,
         stress_type=StressTypes.INCLUDED,
     )
+
+    ## Prepare ref data for easier comparisons
+    for key in ref_data.keys():
+        # ref_data[key]["wave_shift"] = ref_data[key].pop("WaveShift")
+        # ref_data[key]["wave_width"] = ref_data[key].pop("WaveWidth")
+        assert ref_data[key]["WaveShift"] == data[key]["wave_shift"]
 
     assert False
