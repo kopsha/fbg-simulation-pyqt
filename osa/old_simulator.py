@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
-    
+
 Email: freynben@gmail.com
 """
 
@@ -802,6 +802,9 @@ class OSASimulation(object):
         if self.EmulateTemperature != -1.0:
             for i in np.arange(0, self.NumberFBG):
                 FBGmaxmin["FBG" + str(b)][AVTemperature] = self.EmulateTemperature
+
+        self._FBGmaxmin = FBGmaxmin  # save value for testing
+
 
         # fixed component: Transverse stress"""
         fce = (

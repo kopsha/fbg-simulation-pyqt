@@ -182,6 +182,7 @@ def test_output_sum(init_params):
         FBGOriginalWavel=init_params["original_wavelengths"],
     )
     ref_data = ref_sim.FBGOutSum
+    ref_fbg_stats = ref_sim._FBGmaxmin
 
     ## Prepare simulation to be tested
     simu = OsaSimulator(**init_params)
@@ -190,11 +191,23 @@ def test_output_sum(init_params):
         strain_type=StrainTypes.NON_UNIFORM,
         stress_type=StressTypes.INCLUDED,
     )
+    fbg_stats = simu._fbg_stats
 
-    ## Prepare ref data for easier comparisons
-    for key in ref_data.keys():
-        # ref_data[key]["wave_shift"] = ref_data[key].pop("WaveShift")
-        # ref_data[key]["wave_width"] = ref_data[key].pop("WaveWidth")
-        assert ref_data[key]["WaveShift"] == data[key]["wave_shift"]
+    ## Assert starting stats are equal too
+    for fkey in fbg_stats.keys():
+        stats = fbg_stats[fkey]
+        ref_stats = ref_fbg_stats[fkey]
+        for measure in stats.keys():
+            assert np.isclose(stats[measure], ref_stats[measure])
 
-    assert False
+    assert data.keys() == ref_data.keys()
+    for fkey in data.keys():
+        wave_shift = data[fkey]["wave_shift"]
+        assert len(ref_data[fkey]["WaveShift"]) == 1
+        ref_wave_shift = ref_data[fkey]["WaveShift"][0]
+        assert np.isclose(wave_shift, ref_wave_shift)
+
+        wave_shift = data[fkey]["wave_width"]
+        assert len(ref_data[fkey]["WaveWidth"]) == 1
+        ref_wave_shift = ref_data[fkey]["WaveWidth"][0]
+        assert np.isclose(wave_shift, ref_wave_shift)

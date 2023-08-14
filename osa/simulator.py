@@ -436,27 +436,30 @@ class OsaSimulator:
         dict
             A dictionary with the computed statistics for each FBG sensor.
         """
-
         stat_types = ["AV", "Max", "Min"]
         measures = ["LE11", "LE22", "LE33", "S11", "S22", "S33", "T"]
         operations = {"AV": np.mean, "Max": np.max, "Min": np.min}
 
-        stats_dict = {
-            f"FBG{i+1}": {
-                f"{stat}-{measure}": operations[stat](self.fbg[f"FBG{i+1}"][measure])
-                if not (stat == "AV" and measure == "T" and self.emulate_temperature != -1.0)
-                else self.emulate_temperature
-                for measure in measures
-                for stat in stat_types
-            }
-            for i in range(self.fbg_count)
-        }
+        stats_dict = {}
+        for i in range(self.fbg_count):
+            fbg_key = f"FBG{i+1}"
+            stats_dict[fbg_key] = {}
+            for measure in measures:
+                data_array = np.array(self.fbg[fbg_key][measure], dtype=np.float64)
+                for stat in stat_types:
+                    if stat in {"Max", "Min"} and measure in {"S11", "S22", "S33", "T"}:
+                        # These are not needed
+                        continue
+                    if stat == "AV" and measure == "T" and self.emulate_temperature != -1.0:
+                        stats_dict[fbg_key][f"{stat}-{measure}"] = self.emulate_temperature
+                    else:
+                        stats_dict[fbg_key][f"{stat}-{measure}"] = operations[stat](data_array)
 
         return stats_dict
 
     def _calculate_wave_shift(
-        self, strain_type: StrainTypes, fbg_stat: dict, original_wavelength: float
-    ) -> float:
+        self, strain_type: StrainTypes, fbg_stat: dict, original_wavelength: np.float64
+    ) -> np.float64:
         """
         Calculate the wavelength shift for a given strain type.
 
@@ -502,7 +505,7 @@ class OsaSimulator:
             return original_wavelength * common_term
 
     def _calculate_grating_periods(
-        self, strain_type: StrainTypes, fbg_stat: dict, original_wavelength: float
+        self, strain_type: StrainTypes, fbg_stat: dict, original_wavelength: np.float64
     ) -> tuple:
         """
         Calculate the grating periods for the provided strain type.
@@ -573,10 +576,10 @@ class OsaSimulator:
         strain_type: StrainTypes,
         stress_type: StressTypes,
         fbg_stat: dict,
-        original_wavelength: float,
-        grating_period_max: float,
-        grating_period_min: float,
-    ) -> float:
+        original_wavelength: np.float64,
+        grating_period_max: np.float64,
+        grating_period_min: np.float64,
+    ) -> np.float64:
         """
         Computes the peak width of a Fiber Bragg Grating (FBG) based on strain and
         stress considerations. The width is influenced by non-uniform strain (if
@@ -635,7 +638,7 @@ class OsaSimulator:
         self, strain_type: StrainTypes, stress_type: StressTypes
     ) -> dict:
         """
-        Calculate the wavelength shift and peak width for a set of FBGs.
+        Calculate the wavelength shift and peak spliting per sensor.
 
         This method computes the wavelength shift and peak width for each FBG in
         the set based on the given strain and stress types. The calculations are
@@ -669,7 +672,15 @@ class OsaSimulator:
             raise ValueError(f"{strain_type} is not a valid stress type.")
 
         fbg_stats = self._calculate_strain_stats()
-        output = {f"FBG{i+1}": {"wave_shift": [], "wave_width": []} for i in range(self.fbg_count)}
+        self._fbg_stats = fbg_stats
+
+        output = {
+            f"FBG{i+1}": {
+                "wave_shift": np.empty(self.fbg_count, dtype=np.float64),
+                "wave_width": np.empty(self.fbg_count, dtype=np.float64),
+            }
+            for i in range(self.fbg_count)
+        }
 
         for i in range(self.fbg_count):
             key = f"FBG{i+1}"
@@ -691,7 +702,7 @@ class OsaSimulator:
                 grating_period_min,
             )
 
-            output[key]["wave_shift"].append(wavelength_shift)
-            output[key]["wave_width"].append(peak_width_total)
+            output[key]["wave_shift"] = wavelength_shift
+            output[key]["wave_width"] = peak_width_total
 
         return output
