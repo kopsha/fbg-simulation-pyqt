@@ -504,6 +504,35 @@ class OsaSimulator:
     def _calculate_grating_periods(
         self, strain_type: StrainTypes, fbg_stat: dict, original_wavelength: float
     ) -> tuple:
+        """
+        Calculate the grating periods for the provided strain type.
+
+        For `StrainTypes.NONE` and `StrainTypes.UNIFORM`, both the maximum and
+        minimum grating periods are the same. For `StrainTypes.NON_UNIFORM`, the
+        grating periods are determined separately for the maximum and minimum strains.
+
+        Parameters
+        ----------
+        strain_type : StrainTypes
+            Type of strain to consider. Options are: NONE, UNIFORM, or NON_UNIFORM.
+        fbg_stat : dict
+            Dictionary containing statistics related to Fiber Bragg Gratings (FBG).
+            Expected to contain keys like "AV-T" for average temperature, "AV-LE11" for average
+            longitudinal strain, "Max-LE11" for maximum longitudinal strain, and "Min-LE11" for minimum
+            longitudinal strain.
+        original_wavelength : float
+            The original wavelength of the FBG before any strain or temperature effects.
+
+        Returns
+        -------
+        tuple
+            A tuple containing two values: the maximum grating period and the minimum grating period.
+
+        Notes
+        -----
+        The calculation is based on the assumption that strain and temperature
+        changes are small enough to be considered linear.
+        """
         temperature_diff = fbg_stat["AV-T"] - self.ambient_temperature
 
         common_term = (
@@ -548,6 +577,38 @@ class OsaSimulator:
         grating_period_max: float,
         grating_period_min: float,
     ) -> float:
+        """
+        Computes the peak width of a Fiber Bragg Grating (FBG) based on strain and
+        stress considerations. The width is influenced by non-uniform strain (if
+        present) and by the transverse stress (if included).
+
+        Parameters
+        ----------
+        strain_type : StrainTypes
+            Type of strain to consider. Options are: NONE, UNIFORM, or NON_UNIFORM.
+        stress_type : StressTypes
+            Type of stress to consider. Options are: NONE or INCLUDED.
+        fbg_stat : dict
+            Dictionary containing statistics related to Fiber Bragg Gratings (FBG).
+            Expected to contain keys like "AV-S33" and "AV-S22" for stress values
+            in different directions.
+        original_wavelength : float
+            The original wavelength of the FBG before any strain or temperature effects.
+        grating_period_max : float
+            Maximum grating period calculated based on strain effects.
+        grating_period_min : float
+            Minimum grating period calculated based on strain effects.
+
+        Returns
+        -------
+        float
+            The calculated peak width for the FBG based on the provided strain and stress types.
+
+        Notes
+        -----
+        The method considers the peak width contributions only if the corresponding
+        strain or stress type is specified.
+        """
         peak_width_1 = (
             2 * self.initial_refractive_index * (grating_period_max - grating_period_min)
             if strain_type == StrainTypes.NON_UNIFORM
@@ -570,7 +631,37 @@ class OsaSimulator:
 
         return peak_width_1 + peak_width_2
 
-    def fbg_output_sum(self, strain_type: StrainTypes, stress_type: StressTypes) -> dict:
+    def compute_fbg_shifts_and_widths(
+        self, strain_type: StrainTypes, stress_type: StressTypes
+    ) -> dict:
+        """
+        Calculate the wavelength shift and peak width for a set of FBGs.
+
+        This method computes the wavelength shift and peak width for each FBG in
+        the set based on the given strain and stress types. The calculations are
+        determined using helper methods for wave shift, grating periods, and peak
+        width.
+
+        Parameters
+        ----------
+        strain_type : StrainTypes
+            Type of strain to consider. Options are: NONE, UNIFORM, or NON_UNIFORM.
+        stress_type : StressTypes
+            Type of stress to consider. Options are: NONE or INCLUDED.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the calculated wavelength shift and peak width
+            for each FBG. The keys are FBG identifiers (e.g., "FBG1", "FBG2", ...),
+            and the values are dictionaries with keys "wave_shift" and "wave_width",
+            each containing a list of corresponding values.
+
+        Raises
+        ------
+        ValueError
+            If the provided strain_type or stress_type is not valid.
+        """
         if strain_type not in StrainTypes._value2member_map_:
             raise ValueError(f"{strain_type} is not a valid strain type.")
 
@@ -602,9 +693,5 @@ class OsaSimulator:
 
             output[key]["wave_shift"].append(wavelength_shift)
             output[key]["wave_width"].append(peak_width_total)
-
-            print(
-                f"{key} | Grating period max: {grating_period_max} | Grating period min: {grating_period_min} | wave_shift: {wavelength_shift} | Peak Width Total: {peak_width_total}"
-            )
 
         return output

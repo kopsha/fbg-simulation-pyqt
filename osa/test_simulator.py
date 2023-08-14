@@ -190,7 +190,7 @@ def test_output_sum(init_params):
     ## Prepare simulation to be tested
     simu = OsaSimulator(**init_params)
     simu.from_file("sample/tut-export-limited.txt", units=units)
-    data = simu.fbg_output_sum(
+    data = simu.compute_fbg_shifts_and_widths(
         strain_type=StrainTypes.NON_UNIFORM,
         stress_type=StressTypes.INCLUDED,
     )
