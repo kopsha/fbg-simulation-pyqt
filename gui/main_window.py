@@ -72,10 +72,13 @@ class MainWindow(QWidget):
         section_3 = self.make_parameters_section(3)
         grid.addLayout(section_3, 2, 1)
 
+        section_4 = self.make_virtual_configuration_section(4)
+        grid.addLayout(section_4, 2, 2)
+
         return grid
 
     def make_loader_section(self, section_id: int):
-        title = QLabel(f"({section_id}) Incarca datele de tensiune si intindere")
+        title = QLabel(f"({section_id}) Incarca datele de tensiune si deformare")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         load_button = QPushButton("Alege fisier")
@@ -106,12 +109,14 @@ class MainWindow(QWidget):
         title = QLabel(f"({section_id}) Alege tipul simularii")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        strain_type_group = QGroupBox("Alege tipul de intindere")
+        strain_type_group = QGroupBox("Alege tipul de deformare")
         strain_group_layout = QVBoxLayout()
-        no_strain = QRadioButton("Fara intindere", strain_type_group)
+        no_strain = QRadioButton("Fara deformare", strain_type_group)
         no_strain.setChecked(True)
-        uniform_strain = QRadioButton("Cu intindere longitudinala uniforma", strain_type_group)
-        non_uniform_strain = QRadioButton("Cu intindere longitudinala neuniforma", strain_type_group)
+        uniform_strain = QRadioButton("Deformare longitudinala uniforma", strain_type_group)
+        non_uniform_strain = QRadioButton(
+            "Deformare longitudinala neuniforma", strain_type_group
+        )
         strain_group_layout.addWidget(no_strain)
         strain_group_layout.addWidget(uniform_strain)
         strain_group_layout.addWidget(non_uniform_strain)
@@ -130,7 +135,9 @@ class MainWindow(QWidget):
         row1 = QHBoxLayout()
         has_emulate_temperature = QCheckBox("Emuleaza temperatura model", emulation_group)
         unit_label = QLabel("[K]", emulation_group)
-        emulate_temperature = QLineEdit("293.15", emulation_group, alignment=Qt.AlignmentFlag.AlignRight)
+        emulate_temperature = QLineEdit(
+            "293.15", emulation_group, alignment=Qt.AlignmentFlag.AlignRight
+        )
         emulate_temperature.setEnabled(False)
         has_emulate_temperature.toggled.connect(emulate_temperature.setEnabled)
         row1.addWidget(has_emulate_temperature, stretch=3)
@@ -141,7 +148,9 @@ class MainWindow(QWidget):
         has_host_expansion = QCheckBox(emulation_group)
         has_host_expansion.setText("Coeficientul de dilatatie termica (host)")
         unit_label = QLabel("[K<sup>-1</sup>]", emulation_group)
-        host_expansion_coefficient = QLineEdit("5e-5", emulation_group, alignment=Qt.AlignmentFlag.AlignRight)
+        host_expansion_coefficient = QLineEdit(
+            "5e-5", emulation_group, alignment=Qt.AlignmentFlag.AlignRight
+        )
         host_expansion_coefficient.setEnabled(False)
         has_host_expansion.toggled.connect(host_expansion_coefficient.setEnabled)
         row2.addWidget(has_host_expansion, stretch=3)
@@ -163,24 +172,50 @@ class MainWindow(QWidget):
         return layout
 
     def make_parameters_section(self, section_id: int):
-        title = QLabel(f"({section_id}) Parametri simulare", alignment=Qt.AlignmentFlag.AlignCenter)
+        title = QLabel(
+            f"({section_id}) Parametri simulare", alignment=Qt.AlignmentFlag.AlignCenter
+        )
 
-        row1, simulation_resolution = self.make_float_parameter("Rezoluția simulării", "[nm]", "0.05")
-        row2, max_bandwidth = self.make_float_parameter("Lățime de bandă maximă", "[nm]", "1500.00")
-        row3, min_bandwidth = self.make_float_parameter("Lățime de bandă minimă", "[nm]", "1600.00")
-        row4, ambient_temperature = self.make_float_parameter("Temperatura ambientală", "[K]", "293.15")
+        row1, simulation_resolution = self.make_float_parameter(
+            "Rezoluția simulării", "[nm]", "0.05"
+        )
+        row2, max_bandwidth = self.make_float_parameter(
+            "Lățime de bandă maximă", "[nm]", "1500.00"
+        )
+        row3, min_bandwidth = self.make_float_parameter(
+            "Lățime de bandă minimă", "[nm]", "1600.00"
+        )
+        row4, ambient_temperature = self.make_float_parameter(
+            "Temperatura ambientală", "[K]", "293.15"
+        )
 
-        advanded_group = QGroupBox("Atributele fibrei (mod avansat)", checkable=True, checked=False)
+        advanded_group = QGroupBox(
+            "Atributele fibrei (mod avansat)", checkable=True, checked=False
+        )
 
-        row5, initial_refractive_index = self.make_float_parameter("Indicele de refracție inițială", "[n<sub>eff</sub>]", "1.46")
-        row6, mean_change_refractive_index = self.make_float_parameter("Variația medie în indicele de refracție", "[δn<sub>edd</sub>]", "4.5e-4")
+        row5, initial_refractive_index = self.make_float_parameter(
+            "Indicele de refracție inițială", "[n<sub>eff</sub>]", "1.46"
+        )
+        row6, mean_change_refractive_index = self.make_float_parameter(
+            "Variația medie în indicele de refracție", "[δn<sub>edd</sub>]", "4.5e-4"
+        )
         row7, fringe_visibility = self.make_float_parameter("Vizibilitatea franjelor", "%", "1.0")
-        row8, directional_refractive_p11 = self.make_float_parameter("Constanta fotoelastică normală (Pockel)", "p<sub>11</sub>", "0.121")
-        row9, directional_refractive_p12 = self.make_float_parameter("Constanta fotoelastică de tăiere (Pockel)", "p<sub>12</sub>", "0.270")
-        row10, youngs_mod = self.make_float_parameter("Modulul de elasticitate (Young)", "[Pa]", "75e9")
+        row8, directional_refractive_p11 = self.make_float_parameter(
+            "Constanta fotoelastică normală (Pockel)", "p<sub>11</sub>", "0.121"
+        )
+        row9, directional_refractive_p12 = self.make_float_parameter(
+            "Constanta fotoelastică de tăiere (Pockel)", "p<sub>12</sub>", "0.270"
+        )
+        row10, youngs_mod = self.make_float_parameter(
+            "Modulul de elasticitate (Young)", "[Pa]", "75e9"
+        )
         row11, poissons_coefficient = self.make_float_parameter("Coeficientul Poisson", "", "0.17")
-        row12, fiber_expansion_coefficient = self.make_float_parameter("Coeficientul de dilatație termică", "[K<sup>-1</sup>]", "0.55e-6")
-        row13, host_expansion_coefficient = self.make_float_parameter("Coeficientul de dilatație termică (host)", "[K<sup>-1</sup>]", "8.3e-6")
+        row12, fiber_expansion_coefficient = self.make_float_parameter(
+            "Coeficientul de dilatație termică", "[K<sup>-1</sup>]", "0.55e-6"
+        )
+        row13, host_expansion_coefficient = self.make_float_parameter(
+            "Coeficientul de dilatație termică (host)", "[K<sup>-1</sup>]", "8.3e-6"
+        )
 
         advanced_group_layout = QVBoxLayout()
         advanced_group_layout.addLayout(row5)
@@ -215,6 +250,43 @@ class MainWindow(QWidget):
         row.addWidget(value)
         return row, value
 
+    def make_virtual_configuration_section(self, section_id: int):
+        title = QLabel(
+            f"({section_id}) Configurația matricei virtuale FBG", alignment=Qt.AlignmentFlag.AlignCenter
+        )
+
+        row1, fbg_count = self.make_float_parameter(
+            "Numarul de sensori", "", "1"
+        )
+        row2, fbg_length = self.make_float_parameter(
+            "Lungimea", "mm", "10.0"
+        )
+        row3, fbg_length = self.make_float_parameter(
+            "Toleranta", "mm", "0.01"
+        )
+
+        advanded_group = QGroupBox(
+            "Atributele fibrei (mod avansat)", checkable=True, checked=False
+        )
+
+        row5, initial_refractive_index = self.make_float_parameter(
+            "Indicele de refracție inițială", "[n<sub>eff</sub>]", "1.46"
+        )
+
+        advanced_group_layout = QVBoxLayout()
+        advanced_group_layout.addLayout(row5)
+        advanded_group.setLayout(advanced_group_layout)
+
+        layout = QVBoxLayout()
+        layout.addWidget(title)
+        layout.addLayout(row1)
+        layout.addLayout(row2)
+        layout.addLayout(row3)
+        layout.addWidget(advanded_group)
+        layout.addStretch()
+
+        return layout
+
     def println(self, text: str):
         if isinstance(text, str):
             show_text = text
@@ -224,7 +296,9 @@ class MainWindow(QWidget):
         self.console.moveCursor(QTextCursor.MoveOperation.End)
 
     def load_file(self):
-        fullpath, _ = QFileDialog.getOpenFileName(self, "Incarca datele din", "./sample", "text (*.txt)")
+        fullpath, _ = QFileDialog.getOpenFileName(
+            self, "Incarca datele din", "./sample", "text (*.txt)"
+        )
         self.filepath.setText(fullpath)
 
     @QtCore.Slot()
