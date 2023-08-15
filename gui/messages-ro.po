@@ -118,3 +118,9 @@ msgstr "Toleranța"
 
 msgid "Incarca datele din"
 msgstr "Încarcă datele din"
+
+msgid "Pozitiile senzorilor FBG fata de start"
+msgstr "Pozițiile senzorilor FBG față de start"
+
+msgid "Lungimile de unda originale"
+msgstr "Lungimile de undă originale"
