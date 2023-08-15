@@ -23,11 +23,11 @@ msgstr "Încarcă datele de tensiune și deformare"
 msgid "Alege fisier"
 msgstr "Alege fișier"
 
-msgid "Daca distantele nu sunt exprimate in milimetri (mm)"
-msgstr "Dacă distanțele nu sunt exprimate în milimetri (mm)"
+msgid "Daca distantele nu sunt exprimate in milimetri [mm]"
+msgstr "Dacă distanțele nu sunt exprimate în milimetri [mm]"
 
-msgid "Aplica conversia din (m) in (mm)"
-msgstr "Aplică conversia din (m) în (mm)"
+msgid "Aplica conversia din m in mm"
+msgstr "Aplică conversia din m în mm"
 
 msgid "Alege tipul simularii"
 msgstr "Alege tipul simulării"

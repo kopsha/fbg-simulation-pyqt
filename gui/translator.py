@@ -16,5 +16,5 @@ def init_translations(lang_code="ro") -> None:
 
 def tr(msgid: str) -> str:
     if msgid not in _translations:
-        print(f"WARNING: {msgid} is not found")
+        print(f"WARNING: The message '{msgid}' was not found in translations.")
     return _translations.get(msgid, msgid)
