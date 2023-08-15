@@ -130,8 +130,7 @@ class MainWindow(QWidget):
         row1 = QHBoxLayout()
         has_emulate_temperature = QCheckBox("Emuleaza temperatura model", emulation_group)
         unit_label = QLabel("[K]", emulation_group)
-        emulate_temperature = QLineEdit("293.15", emulation_group)
-        emulate_temperature.setAlignment(Qt.AlignmentFlag.AlignRight)
+        emulate_temperature = QLineEdit("293.15", emulation_group, alignment=Qt.AlignmentFlag.AlignRight)
         emulate_temperature.setEnabled(False)
         has_emulate_temperature.toggled.connect(emulate_temperature.setEnabled)
         row1.addWidget(has_emulate_temperature, stretch=3)
@@ -142,8 +141,7 @@ class MainWindow(QWidget):
         has_host_expansion = QCheckBox(emulation_group)
         has_host_expansion.setText("Coeficientul de dilatatie termica (host)")
         unit_label = QLabel("[K<sup>-1</sup>]", emulation_group)
-        host_expansion_coefficient = QLineEdit("5e-5", emulation_group)
-        host_expansion_coefficient.setAlignment(Qt.AlignmentFlag.AlignRight)
+        host_expansion_coefficient = QLineEdit("5e-5", emulation_group, alignment=Qt.AlignmentFlag.AlignRight)
         host_expansion_coefficient.setEnabled(False)
         has_host_expansion.toggled.connect(host_expansion_coefficient.setEnabled)
         row2.addWidget(has_host_expansion, stretch=3)
@@ -165,14 +163,57 @@ class MainWindow(QWidget):
         return layout
 
     def make_parameters_section(self, section_id: int):
-        title = QLabel(f"({section_id}) Parametri simulare")
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title = QLabel(f"({section_id}) Parametri simulare", alignment=Qt.AlignmentFlag.AlignCenter)
+
+        row1, simulation_resolution = self.make_float_parameter("Rezoluția simulării", "[nm]", "0.05")
+        row2, max_bandwidth = self.make_float_parameter("Lățime de bandă maximă", "[nm]", "1500.00")
+        row3, min_bandwidth = self.make_float_parameter("Lățime de bandă minimă", "[nm]", "1600.00")
+        row4, ambient_temperature = self.make_float_parameter("Temperatura ambientală", "[K]", "293.15")
+
+        advanded_group = QGroupBox("Atributele fibrei (mod avansat)", checkable=True, checked=False)
+
+        row5, initial_refractive_index = self.make_float_parameter("Indicele de refracție inițială", "[n<sub>eff</sub>]", "1.46")
+        row6, mean_change_refractive_index = self.make_float_parameter("Variația medie în indicele de refracție", "[δn<sub>edd</sub>]", "4.5e-4")
+        row7, fringe_visibility = self.make_float_parameter("Vizibilitatea franjelor", "%", "1.0")
+        row8, directional_refractive_p11 = self.make_float_parameter("Constanta fotoelastică normală (Pockel)", "p<sub>11</sub>", "0.121")
+        row9, directional_refractive_p12 = self.make_float_parameter("Constanta fotoelastică de tăiere (Pockel)", "p<sub>12</sub>", "0.270")
+        row10, youngs_mod = self.make_float_parameter("Modulul de elasticitate (Young)", "[Pa]", "75e9")
+        row11, poissons_coefficient = self.make_float_parameter("Coeficientul Poisson", "", "0.17")
+        row12, fiber_expansion_coefficient = self.make_float_parameter("Coeficientul de dilatație termică", "[K<sup>-1</sup>]", "0.55e-6")
+        row13, host_expansion_coefficient = self.make_float_parameter("Coeficientul de dilatație termică (host)", "[K<sup>-1</sup>]", "8.3e-6")
+
+        advanced_group_layout = QVBoxLayout()
+        advanced_group_layout.addLayout(row5)
+        advanced_group_layout.addLayout(row6)
+        advanced_group_layout.addLayout(row7)
+        advanced_group_layout.addLayout(row8)
+        advanced_group_layout.addLayout(row9)
+        advanced_group_layout.addLayout(row10)
+        advanced_group_layout.addLayout(row11)
+        advanced_group_layout.addLayout(row12)
+        advanced_group_layout.addLayout(row13)
+        advanded_group.setLayout(advanced_group_layout)
 
         layout = QVBoxLayout()
         layout.addWidget(title)
+        layout.addLayout(row1)
+        layout.addLayout(row2)
+        layout.addLayout(row3)
+        layout.addLayout(row4)
+        layout.addWidget(advanded_group)
         layout.addStretch()
 
         return layout
+
+    def make_float_parameter(self, display_text: str, unit_text, value_text):
+        row = QHBoxLayout()
+        label = QLabel(display_text)
+        unit_label = QLabel(unit_text)
+        value = QLineEdit(value_text, alignment=Qt.AlignmentFlag.AlignRight)
+        row.addWidget(label, stretch=3)
+        row.addWidget(unit_label)
+        row.addWidget(value)
+        return row, value
 
     def println(self, text: str):
         if isinstance(text, str):
