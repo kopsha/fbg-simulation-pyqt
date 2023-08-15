@@ -1,4 +1,3 @@
-import random
 from PySide6.QtWidgets import (
     QWidget,
     QPushButton,
@@ -13,7 +12,6 @@ from PySide6.QtWidgets import (
     QGroupBox,
     QRadioButton,
 )
-from PySide6 import QtCore
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QTextCursor
 
@@ -21,14 +19,6 @@ from PySide6.QtGui import QTextCursor
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-
-        self.hellos = [
-            "Hello world",
-            "Hallo Welt",
-            "Hei maailma",
-            "Hola Mundo",
-            "Привет мир",
-        ]
         self.setup_ui()
 
     def setup_ui(self):
@@ -114,9 +104,7 @@ class MainWindow(QWidget):
         no_strain = QRadioButton("Fara deformare", strain_type_group)
         no_strain.setChecked(True)
         uniform_strain = QRadioButton("Deformare longitudinala uniforma", strain_type_group)
-        non_uniform_strain = QRadioButton(
-            "Deformare longitudinala neuniforma", strain_type_group
-        )
+        non_uniform_strain = QRadioButton("Deformare longitudinala neuniforma", strain_type_group)
         strain_group_layout.addWidget(no_strain)
         strain_group_layout.addWidget(uniform_strain)
         strain_group_layout.addWidget(non_uniform_strain)
@@ -252,18 +240,13 @@ class MainWindow(QWidget):
 
     def make_virtual_configuration_section(self, section_id: int):
         title = QLabel(
-            f"({section_id}) Configurația matricei virtuale FBG", alignment=Qt.AlignmentFlag.AlignCenter
+            f"({section_id}) Configurația matricei virtuale FBG",
+            alignment=Qt.AlignmentFlag.AlignCenter,
         )
 
-        row1, fbg_count = self.make_float_parameter(
-            "Numarul de sensori", "", "1"
-        )
-        row2, fbg_length = self.make_float_parameter(
-            "Lungimea", "mm", "10.0"
-        )
-        row3, fbg_length = self.make_float_parameter(
-            "Toleranta", "mm", "0.01"
-        )
+        row1, fbg_count = self.make_float_parameter("Numarul de sensori", "", "1")
+        row2, fbg_length = self.make_float_parameter("Lungimea", "mm", "10.0")
+        row3, fbg_length = self.make_float_parameter("Toleranta", "mm", "0.01")
 
         advanded_group = QGroupBox(
             "Atributele fibrei (mod avansat)", checkable=True, checked=False
@@ -300,7 +283,3 @@ class MainWindow(QWidget):
             self, "Incarca datele din", "./sample", "text (*.txt)"
         )
         self.filepath.setText(fullpath)
-
-    @QtCore.Slot()
-    def on_click(self):
-        self.text.setText(random.choice(self.hellos))
