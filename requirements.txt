@@ -2,3 +2,4 @@ pyside6
 pytest
 fbs
 numpy
+polib
