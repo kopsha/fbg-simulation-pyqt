@@ -136,3 +136,6 @@ msgstr "Pornește simularea"
 
 msgid "Deschide grafic simulare"
 msgstr "Deschide grafic simulare"
+
+msgid "Coeficientul termo-optic"
+msgstr "Coeficientul termo-optic"
