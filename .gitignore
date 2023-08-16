@@ -1,6 +1,8 @@
 .DS_Store
 .nvimlog
 .venv/
+*~
+translation/**/
 
 # Python precompiled
 __pycache__/

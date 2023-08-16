@@ -1,0 +1,194 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-08-17 01:25+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../gui/main_window.py:40
+msgid "Aplicatia a fost initializata cu succes."
+msgstr ""
+
+#: ../gui/main_window.py:72
+msgid "Incarca datele de tensiune si deformare"
+msgstr ""
+
+#: ../gui/main_window.py:76
+msgid "Alege fisier"
+msgstr ""
+
+#: ../gui/main_window.py:86
+msgid "Daca distantele nu sunt exprimate in milimetri [mm]"
+msgstr ""
+
+#: ../gui/main_window.py:87
+msgid "Aplica conversia din m in mm"
+msgstr ""
+
+#: ../gui/main_window.py:110
+msgid "Alege tipul simularii"
+msgstr ""
+
+#: ../gui/main_window.py:113
+msgid "Alege tipul de deformare"
+msgstr ""
+
+#: ../gui/main_window.py:116
+msgid "Fara deformare"
+msgstr ""
+
+#: ../gui/main_window.py:118
+msgid "Deformare longitudinala uniforma"
+msgstr ""
+
+#: ../gui/main_window.py:120
+msgid "Deformare longitudinala neuniforma"
+msgstr ""
+
+#: ../gui/main_window.py:132
+msgid "Alege tipul de tensiune"
+msgstr ""
+
+#: ../gui/main_window.py:135
+msgid "Fara tensiune"
+msgstr ""
+
+#: ../gui/main_window.py:137
+msgid "Cu tensiune transversala"
+msgstr ""
+
+#: ../gui/main_window.py:146
+msgid "Optiuni emulare"
+msgstr ""
+
+#: ../gui/main_window.py:149
+msgid "Emuleaza temperatura model"
+msgstr ""
+
+#: ../gui/main_window.py:157
+msgid "Coeficientul de dilatatie termica (host)"
+msgstr ""
+
+#: ../gui/main_window.py:180
+msgid "Parametri simulare"
+msgstr ""
+
+#: ../gui/main_window.py:185
+msgid "Rezolutia simularii"
+msgstr ""
+
+#: ../gui/main_window.py:188
+msgid "Latime de banda maxima"
+msgstr ""
+
+#: ../gui/main_window.py:191
+msgid "Latime de banda minima"
+msgstr ""
+
+#: ../gui/main_window.py:194
+msgid "Temperatura ambientala"
+msgstr ""
+
+#: ../gui/main_window.py:198
+msgid "Atributele fibrei (mod avansat)"
+msgstr ""
+
+#: ../gui/main_window.py:202
+msgid "Indicele de refractie initiala"
+msgstr ""
+
+#: ../gui/main_window.py:205
+msgid "Variatia medie in indicele de refractie"
+msgstr ""
+
+#: ../gui/main_window.py:208
+msgid "Vizibilitatea franjelor"
+msgstr ""
+
+#: ../gui/main_window.py:211
+msgid "Constanta fotoelastica normala (Pockel)"
+msgstr ""
+
+#: ../gui/main_window.py:214
+msgid "Constanta fotoelastica de taiere (Pockel)"
+msgstr ""
+
+#: ../gui/main_window.py:217
+msgid "Modulul de elasticitate (Young)"
+msgstr ""
+
+#: ../gui/main_window.py:220
+msgid "Coeficientul Poisson"
+msgstr ""
+
+#: ../gui/main_window.py:223
+msgid "Coeficientul de dilatatie termica"
+msgstr ""
+
+#: ../gui/main_window.py:226
+msgid "Coeficientul termo-optic"
+msgstr ""
+
+#: ../gui/main_window.py:268
+msgid "Configuratia matricei virtuale FBG"
+msgstr ""
+
+#: ../gui/main_window.py:272
+msgid "Numarul de senzori"
+msgstr ""
+
+#: ../gui/main_window.py:273
+msgid "Lungimea"
+msgstr ""
+
+#: ../gui/main_window.py:274
+msgid "Toleranta"
+msgstr ""
+
+#: ../gui/main_window.py:277
+msgid "Pozitiile senzorilor FBG fata de start"
+msgstr ""
+
+#: ../gui/main_window.py:280
+msgid "Lungimile de unda originale"
+msgstr ""
+
+#: ../gui/main_window.py:319
+msgid "Simulare de spectru"
+msgstr ""
+
+#: ../gui/main_window.py:324
+msgid "Include semnalul reflectat nedeformat"
+msgstr ""
+
+#: ../gui/main_window.py:325
+msgid "Porneste simularea"
+msgstr ""
+
+#: ../gui/main_window.py:327
+msgid "Deschide grafic simulare"
+msgstr ""
+
+#: ../gui/main_window.py:340
+msgid "Jurnal mesaje"
+msgstr ""
+
+#: ../gui/main_window.py:347
+msgid "Sterge jurnal"
+msgstr ""
+
+#: ../gui/main_window.py:367
+msgid "Incarca datele din"
+msgstr ""
