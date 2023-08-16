@@ -124,3 +124,15 @@ msgstr "Pozițiile senzorilor FBG față de start"
 
 msgid "Lungimile de unda originale"
 msgstr "Lungimile de undă originale"
+
+msgid "Simulare de spectru"
+msgstr "Simulare de spectru"
+
+msgid "Include semnalul reflectat nedeformat"
+msgstr "Include semnalul reflectat nedeformat"
+
+msgid "Porneste simularea"
+msgstr "Pornește simularea"
+
+msgid "Deschide grafic simulare"
+msgstr "Deschide grafic simulare"

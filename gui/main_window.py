@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
     QCheckBox,
     QGroupBox,
     QRadioButton,
+    QProgressBar,
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QTextCursor
@@ -37,18 +38,13 @@ class MainWindow(QWidget):
         self.println(tr("Aplicatia a fost initializata cu succes."))
 
     def make_side_layout(self):
-        title = QLabel(tr("Jurnal mesaje"), self, alignment=Qt.AlignmentFlag.AlignCenter)
-
-        self.console = QTextEdit(self)
-        self.console.setReadOnly(True)
-
-        clear_button = QPushButton(tr("Sterge jurnal"), self)
-        clear_button.clicked.connect(self.console.clear)
-
         layout = QVBoxLayout()
-        layout.addWidget(title)
-        layout.addWidget(self.console)
-        layout.addWidget(clear_button)
+
+        section_5 = self.make_spectrum_section(5)
+        layout.addLayout(section_5)
+
+        section_6 = self.make_journal_section(6)
+        layout.addLayout(section_6)
 
         return layout
 
@@ -70,7 +66,7 @@ class MainWindow(QWidget):
         return grid
 
     def make_loader_section(self, section_id: int):
-        title = QLabel("({}) {}".format(section_id, tr("Incarca datele de tensiune si deformare")))
+        title = QLabel("<b>({}) {}</b>".format(section_id, tr("Incarca datele de tensiune si deformare")))
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         load_button = QPushButton(tr("Alege fisier"))
@@ -98,7 +94,7 @@ class MainWindow(QWidget):
         return layout
 
     def make_deform_types_section(self, section_id: int):
-        title = QLabel("({}) {}".format(section_id, tr("Alege tipul simularii")))
+        title = QLabel("<b>({}) {}</b>".format(section_id, tr("Alege tipul simularii")))
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         strain_type_group = QGroupBox(tr("Alege tipul de deformare"))
@@ -166,7 +162,7 @@ class MainWindow(QWidget):
 
     def make_parameters_section(self, section_id: int):
         title = QLabel(
-            "({}) {}".format(section_id, tr("Parametri simulare")),
+            "<b>({}) {}</b>".format(section_id, tr("Parametri simulare")),
             alignment=Qt.AlignmentFlag.AlignCenter,
         )
 
@@ -191,7 +187,7 @@ class MainWindow(QWidget):
             tr("Indicele de refractie initiala"), "[n<sub>eff</sub>]", "1.46"
         )
         row6, mean_change_refractive_index = self.make_float_parameter(
-            tr("Variatia medie in indicele de refractie"), "[δn<sub>edd</sub>]", "4.5e-4"
+            tr("Variatia medie in indicele de refractie"), "[δn<sub>eff</sub>]", "4.5e-4"
         )
         row7, fringe_visibility = self.make_float_parameter(
             tr("Vizibilitatea franjelor"), "%", "1.0"
@@ -250,7 +246,7 @@ class MainWindow(QWidget):
 
     def make_virtual_configuration_section(self, section_id: int):
         title = QLabel(
-            "({}) {}".format(section_id, tr("Configuratia matricei virtuale FBG")),
+            "<b>({}) {}</b>".format(section_id, tr("Configuratia matricei virtuale FBG")),
             alignment=Qt.AlignmentFlag.AlignCenter,
         )
 
@@ -298,6 +294,40 @@ class MainWindow(QWidget):
         group.setLayout(layout)
 
         return group, values
+
+    def make_spectrum_section(self, section_id: int):
+        title = QLabel("<b>({}) {}</b>".format(section_id, tr("Simulare de spectru")), alignment=Qt.AlignmentFlag.AlignCenter)
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        has_reflected_signal = QCheckBox(tr("Include semnalul reflectat nedeformat"))
+        simulate_button = QPushButton(tr("Porneste simularea"))
+        progress = QProgressBar(value=0)
+        show_plot_button = QPushButton(tr("Deschide grafic simulare"))
+
+        layout = QVBoxLayout()
+        layout.addWidget(title)
+        layout.addWidget(has_reflected_signal)
+        layout.addWidget(simulate_button)
+        layout.addWidget(progress)
+        layout.addWidget(show_plot_button)
+
+        return layout
+
+    def make_journal_section(self, section_id: int):
+        title = QLabel("<b>({}) {}</b>".format(section_id, tr("Jurnal mesaje")), alignment=Qt.AlignmentFlag.AlignCenter)
+
+        self.console = QTextEdit(self)
+        self.console.setReadOnly(True)
+
+        clear_button = QPushButton(tr("Sterge jurnal"), self)
+        clear_button.clicked.connect(self.console.clear)
+
+        layout = QVBoxLayout()
+        layout.addWidget(title)
+        layout.addWidget(self.console)
+        layout.addWidget(clear_button)
+
+        return layout
 
     def println(self, text: str):
         if isinstance(text, str):

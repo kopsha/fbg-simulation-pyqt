@@ -11,7 +11,7 @@ def main(argv):
     app = QApplication(argv)
 
     window = MainWindow()
-    window.setWindowTitle(f"Simulator FBG {VERSION} - Codruta Toadere(2023)")
+    window.setWindowTitle(f"Simulator FBG v{VERSION} -- (2023) Codruta Toadere")
     window.setWindowIcon(QIcon("resources/app-icon-96.ico"))
     window.resize(1024, 768)
     window.show()
