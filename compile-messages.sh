@@ -34,6 +34,7 @@ cd ./translation
 
 # collect all translatable strings
 xgettext ../gui/*.py \
+    --join-existing \
     --sort-output \
     --foreign-user \
     --copyright-holder="${AUTHOR}" \

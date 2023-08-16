@@ -1,1 +1,1 @@
-from .main import init_translations, _
+from .main import install

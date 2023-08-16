@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QTextCursor, QDoubleValidator
 
-from translation import _, init_translations
+import translation
 from osa.simulator import StrainTypes, StressTypes
 
 
@@ -24,7 +24,7 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        init_translations()
+        translation.install("ro")
         self.float_validator = QDoubleValidator(self)
         self.setup_ui()
 
