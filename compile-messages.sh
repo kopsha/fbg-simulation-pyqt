@@ -6,21 +6,28 @@ EMAIL="codrutatoadere@gmail.com"
 
 init()
 {
-    msginit --locale=en_US --input=messages.pot --output=messages-en.po
-    msginit --locale=ro_RO --input=messages.pot --output=messages-ro.po
+    use_locale=$1
+    echo "..: Creating ${use_locale} translation."
+
+    lang=${use_locale:0:2}
+    msginit --locale=${use_locale} --input=messages.pot --output=messages-${lang}.po
 }
 
 compile()
 {
-    language_code=$1
-    lang=${language_code:0:2}
-    msgmerge messages.pot\
-        --lang=${language_code} \
-        --sort-output \
-        --update "messages-${lang}.po"
+    use_locale=$1
+    echo "..: Building ${use_locale} translation binaries"
 
+    lang=${use_locale:0:2}
+    msgmerge messages.pot \
+        --lang=${use_locale} \
+        --sort-output \
+        --verbose \
+        --update "messages-${lang}.po"
     mkdir -p "./${lang}/LC_MESSAGES"
-    msgfmt "messages-${lang}.po" --output="./${lang}/LC_MESSAGES/fbg-simulation-pyqt.mo"
+    msgfmt "messages-${lang}.po" \
+        --verbose \
+        --output="./${lang}/LC_MESSAGES/fbg-simulation-pyqt.mo"
 }
 
 cd ./translation
@@ -33,7 +40,8 @@ xgettext ../gui/*.py \
     --package-name="fbg-simulation-pyqt" \
     --package-version="v2.0" \
     --msgid-bugs-address="${EMAIL}" \
-    --output="messages.pot" \
+    --verbose \
+    --output="messages.pot"
 
 for language in ro_RO en_US; do
     compile $language
