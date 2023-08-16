@@ -21,10 +21,11 @@ from osa.simulator import StrainTypes, StressTypes
 
 
 class MainWindow(QWidget):
+    translation.install("ro")
+
     def __init__(self):
         super().__init__()
 
-        translation.install("ro")
         self.float_validator = QDoubleValidator(self)
         self.setup_ui()
 
