@@ -1,23 +1,25 @@
+from pathlib import Path
 from PySide6.QtWidgets import (
-    QWidget,
-    QPushButton,
-    QLabel,
-    QHBoxLayout,
-    QVBoxLayout,
-    QLineEdit,
-    QGridLayout,
-    QTextEdit,
-    QFileDialog,
     QCheckBox,
+    QFileDialog,
+    QGridLayout,
     QGroupBox,
-    QRadioButton,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
     QProgressBar,
+    QPushButton,
+    QRadioButton,
+    QSpinBox,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QTextCursor, QDoubleValidator
 
 import translation
-from osa.simulator import StrainTypes, StressTypes
+from osa.simulator import StrainTypes, StressTypes, SiUnits
 
 
 class MainWindow(QWidget):
@@ -223,7 +225,7 @@ class MainWindow(QWidget):
         row12, self.fiber_expansion_coefficient = self.make_float_parameter(
             _("Coeficientul de dilatatie termica"), "[K<sup>-1</sup>]", "0.55e-6"
         )
-        row13, self.host_expansion_coefficient = self.make_float_parameter(
+        row13, self.thermo_optic = self.make_float_parameter(
             _("Coeficientul termo-optic"), "[K<sup>-1</sup>]", "8.3e-6"
         )
 
@@ -264,15 +266,29 @@ class MainWindow(QWidget):
         row.addWidget(value)
         return row, value
 
+    def make_int_parameter(self, display_text: str, unit_text, value_text):
+        row = QHBoxLayout()
+        label = QLabel(display_text)
+        unit_label = QLabel(unit_text)
+        value = QSpinBox(
+            value=int(value_text),
+            alignment=Qt.AlignmentFlag.AlignRight,
+            minimum=1,
+        )
+        row.addWidget(label, stretch=3)
+        row.addWidget(unit_label)
+        row.addWidget(value)
+        return row, value
+
     def make_virtual_configuration_section(self, section_id: int):
         title = QLabel(
             "<b>({}) {}</b>".format(section_id, _("Configuratia matricei virtuale FBG")),
             alignment=Qt.AlignmentFlag.AlignCenter,
         )
 
-        row1, self.fbg_count = self.make_float_parameter(_("Numarul de senzori"), "", "1")
+        row1, self.fbg_count = self.make_int_parameter(_("Numarul de senzori"), "", "1")
         row2, self.fbg_length = self.make_float_parameter(_("Lungimea"), "mm", "10.0")
-        row3, self.fbg_length = self.make_float_parameter(_("Toleranta"), "mm", "0.01")
+        row3, self.tolerance = self.make_float_parameter(_("Toleranta"), "mm", "0.01")
 
         positions_group, self.fbg_positions = self.make_float_list_parameter(
             _("Pozitiile senzorilor FBG fata de start"), "[mm]"
@@ -324,6 +340,7 @@ class MainWindow(QWidget):
 
         self.has_reflected_signal = QCheckBox(_("Include semnalul reflectat nedeformat"))
         simulate_button = QPushButton(_("Porneste simularea"))
+        simulate_button.clicked.connect(self.run_simulation)
         progress = QProgressBar(value=0)
         show_plot_button = QPushButton(_("Deschide grafic simulare"))
 
@@ -362,9 +379,84 @@ class MainWindow(QWidget):
             show_text = repr(text)
         self.console.append(show_text)
         self.console.moveCursor(QTextCursor.MoveOperation.End)
+        print(show_text)
 
     def load_file(self):
-        fullpath, _ = QFileDialog.getOpenFileName(
+        fullpath, filter = QFileDialog.getOpenFileName(
             self, _("Incarca datele din"), "./sample", "text (*.txt)"
         )
         self.filepath.setText(fullpath)
+
+    def print_error(self, message: str):
+        self.println("{}: {}".format(_("ERROR"), message))
+
+    def validate_params(self):
+        """Collect all simulation parameters from self and validate them."""
+        is_valid = True
+
+        params = dict(
+            units=SiUnits(int(self.has_si_units.isChecked())),
+            strain_type=self.strain_type,
+            stress_type=self.stress_type,
+            emulate_temperature=float(self.emulate_temperature.text()),
+            host_expansion_coefficient=float(self.host_expansion_coefficient.text()),
+            simulation_resolution=float(self.simulation_resolution.text()),
+            min_bandwidth=float(self.min_bandwidth.text()),
+            max_bandwidth=float(self.max_bandwidth.text()),
+            ambient_temperature=float(self.ambient_temperature.text()),
+            initial_refractive_index=float(self.initial_refractive_index.text()),
+            mean_change_refractive_index=float(self.mean_change_refractive_index.text()),
+            fringe_visibility=float(self.fringe_visibility.text()),
+            directional_refractive_p11=float(self.directional_refractive_p11.text()),
+            directional_refractive_p12=float(self.directional_refractive_p12.text()),
+            youngs_mod=float(self.youngs_mod.text()),
+            poissons_coefficient=float(self.poissons_coefficient.text()),
+            fiber_expansion_coefficient=float(self.fiber_expansion_coefficient.text()),
+            thermo_optic=float(self.thermo_optic.text()),
+            fbg_count=int(self.fbg_count.text()),
+            fbg_length=float(self.fbg_length.text()),
+            tolerance=float(self.tolerance.text()),
+        )
+
+        datafile = self.filepath.text()
+        if Path(datafile).is_file():
+            params["filepath"] = datafile
+        else:
+            self.print_error("'{}' {}".format(datafile, _("is not a valid data file.")))
+            is_valid = False
+
+        if positions := self.fbg_positions.toPlainText():
+            fbg_positions = positions.split("\n")
+        else:
+            fbg_positions = []
+
+        if len(fbg_positions) == params["fbg_count"]:
+            params["fbg_positions"] = list(map(float, fbg_positions))
+        else:
+            self.print_error(
+                "Sensors count ({}) and positions count ({}) should be equal.".format(
+                    params["fbg_count"], len(fbg_positions)
+                )
+            )
+            is_valid = False
+
+        if wave_legths := self.original_wavelengths.toPlainText():
+            original_wavelengths = wave_legths.split("\n")
+        else:
+            original_wavelengths = []
+
+        if len(original_wavelengths) == params["fbg_count"]:
+            params["original_wavelengths"] = list(map(float, original_wavelengths))
+        else:
+            self.print_error(
+                "Sensors count ({}) and original wavelengths count ({}) should be equal.".format(
+                    params["fbg_count"], len(original_wavelengths)
+                )
+            )
+            is_valid = False
+
+        return params
+
+    @Slot()
+    def run_simulation(self):
+        self.validate_params()
