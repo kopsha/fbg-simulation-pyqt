@@ -296,7 +296,6 @@ class OsaSimulator:
         for period in self.original_fbg_periods:
             # Number of sections the grating is divided into for the Transfer Matrix
             wavelengths = np.arange(self.min_bandwidth, self.max_bandwidth, self.resolution)
-
             for wl in wavelengths:
                 trx_mat = self.transfer_matrix(count=M, use_period=period, wavelen=wl)
                 PO, NO = trx_mat[0, 0], trx_mat[1, 0]
@@ -324,7 +323,7 @@ class OsaSimulator:
             Dictionary containing the deformed reflection spectrum with keys 'wavelength' and 'reflec'.
         """
         # Apply a theoretical temperature value if specified
-        if self.emulate_temperature != -1.0:
+        if self.emulate_temperature is not None:
             for i in range(self.fbg_count):
                 self.fbg[f"FBG{i+1}"]["T"][:] = self.emulate_temperature
 
@@ -450,7 +449,7 @@ class OsaSimulator:
                     if stat in {"Max", "Min"} and measure in {"S11", "S22", "S33", "T"}:
                         # These are not needed
                         continue
-                    if stat == "AV" and measure == "T" and self.emulate_temperature != -1.0:
+                    if stat == "AV" and measure == "T" and self.emulate_temperature is not None:
                         stats_dict[fbg_key][f"{stat}-{measure}"] = self.emulate_temperature
                     else:
                         stats_dict[fbg_key][f"{stat}-{measure}"] = operations[stat](data_array)

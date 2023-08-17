@@ -1,4 +1,5 @@
 from pathlib import Path
+from threading import Thread
 from PySide6.QtWidgets import (
     QCheckBox,
     QFileDialog,
@@ -15,11 +16,12 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from PySide6.QtCore import Qt, Slot
-from PySide6.QtGui import QTextCursor, QDoubleValidator
+from PySide6.QtCore import Qt, Slot, QThread
+from PySide6.QtGui import QTextCursor, QDoubleValidator, QCloseEvent
 
 import translation
 from osa.simulator import StrainTypes, StressTypes, SiUnits
+from osa.worker import simulator_worker
 
 
 class MainWindow(QWidget):
@@ -28,6 +30,7 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.worker = None
         self.float_validator = QDoubleValidator(self)
         self.setup_ui()
 
@@ -184,14 +187,14 @@ class MainWindow(QWidget):
             alignment=Qt.AlignmentFlag.AlignCenter,
         )
 
-        row1, self.simulation_resolution = self.make_float_parameter(
+        row1, self.resolution = self.make_float_parameter(
             _("Rezolutia simularii"), "[nm]", "0.05"
         )
-        row2, self.max_bandwidth = self.make_float_parameter(
-            _("Latime de banda maxima"), "[nm]", "1500.00"
+        row2, self.min_bandwidth = self.make_float_parameter(
+            _("Latime de banda minima"), "[nm]", "1500.00"
         )
-        row3, self.min_bandwidth = self.make_float_parameter(
-            _("Latime de banda minima"), "[nm]", "1600.00"
+        row3, self.max_bandwidth = self.make_float_parameter(
+            _("Latime de banda maxima"), "[nm]", "1600.00"
         )
         row4, self.ambient_temperature = self.make_float_parameter(
             _("Temperatura ambientala"), "[K]", "293.15"
@@ -341,14 +344,14 @@ class MainWindow(QWidget):
         self.has_reflected_signal = QCheckBox(_("Include semnalul reflectat nedeformat"))
         simulate_button = QPushButton(_("Porneste simularea"))
         simulate_button.clicked.connect(self.run_simulation)
-        progress = QProgressBar(value=0)
+        self.progress = QProgressBar(value=0)
         show_plot_button = QPushButton(_("Deschide grafic simulare"))
 
         layout = QVBoxLayout()
         layout.addWidget(title)
         layout.addWidget(self.has_reflected_signal)
         layout.addWidget(simulate_button)
-        layout.addWidget(progress)
+        layout.addWidget(self.progress)
         layout.addWidget(show_plot_button)
 
         return layout
@@ -392,15 +395,13 @@ class MainWindow(QWidget):
 
     def validate_params(self):
         """Collect all simulation parameters from self and validate them."""
-        is_valid = True
-
         params = dict(
             units=SiUnits(int(self.has_si_units.isChecked())),
             strain_type=self.strain_type,
             stress_type=self.stress_type,
-            emulate_temperature=float(self.emulate_temperature.text()),
-            host_expansion_coefficient=float(self.host_expansion_coefficient.text()),
-            simulation_resolution=float(self.simulation_resolution.text()),
+            emulate_temperature=float(self.emulate_temperature.text()) if self.has_emulate_temperature.isChecked() else None,
+            host_expansion_coefficient=float(self.host_expansion_coefficient.text()) if self.has_host_expansion.isChecked() else None,
+            resolution=float(self.resolution.text()),
             min_bandwidth=float(self.min_bandwidth.text()),
             max_bandwidth=float(self.max_bandwidth.text()),
             ambient_temperature=float(self.ambient_temperature.text()),
@@ -416,47 +417,63 @@ class MainWindow(QWidget):
             fbg_count=int(self.fbg_count.text()),
             fbg_length=float(self.fbg_length.text()),
             tolerance=float(self.tolerance.text()),
+            has_reflected_signal=self.has_reflected_signal.isChecked(),
         )
 
         datafile = self.filepath.text()
         if Path(datafile).is_file():
             params["filepath"] = datafile
         else:
-            self.print_error("'{}' {}".format(datafile, _("is not a valid data file.")))
-            is_valid = False
+            raise ValueError("'{}' {}".format(datafile, _("is not a valid data file.")))
 
         if positions := self.fbg_positions.toPlainText():
             fbg_positions = positions.split("\n")
         else:
-            fbg_positions = []
+            fbg_positions = [22, 50, 70]
 
         if len(fbg_positions) == params["fbg_count"]:
             params["fbg_positions"] = list(map(float, fbg_positions))
         else:
-            self.print_error(
+            raise ValueError(
                 "Sensors count ({}) and positions count ({}) should be equal.".format(
                     params["fbg_count"], len(fbg_positions)
                 )
             )
-            is_valid = False
 
         if wave_legths := self.original_wavelengths.toPlainText():
             original_wavelengths = wave_legths.split("\n")
         else:
-            original_wavelengths = []
+            original_wavelengths = [1500.0, 1525.0, 1550.0]
 
         if len(original_wavelengths) == params["fbg_count"]:
             params["original_wavelengths"] = list(map(float, original_wavelengths))
         else:
-            self.print_error(
+            raise ValueError(
                 "Sensors count ({}) and original wavelengths count ({}) should be equal.".format(
                     params["fbg_count"], len(original_wavelengths)
                 )
             )
-            is_valid = False
 
         return params
 
     @Slot()
     def run_simulation(self):
-        self.validate_params()
+        if self.worker is not None:
+            self.print_error(_("A simulator session is already in progress."))
+            return
+
+        self.progress.setValue(0)
+        try:
+            params = self.validate_params()
+        except ValueError as err:
+            self.print_error(str(err))
+            return
+
+        self.progress.setValue(15)
+        self.worker = Thread(target=simulator_worker, args=[params])
+        self.worker.run()
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        if self.worker and self.worker.is_alive():
+            raise RuntimeError("Simulation thread is still in progress.")
+        return super().closeEvent(event)
