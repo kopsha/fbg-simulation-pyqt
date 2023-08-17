@@ -1,5 +1,4 @@
 from pathlib import Path
-from threading import Thread
 from PySide6.QtWidgets import (
     QCheckBox,
     QFileDialog,
@@ -16,12 +15,12 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from PySide6.QtCore import Qt, Slot, QThread
+from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QTextCursor, QDoubleValidator, QCloseEvent
 
 import translation
 from osa.simulator import StrainTypes, StressTypes, SiUnits
-from osa.worker import simulator_worker
+from gui.worker import WorkerThread
 
 
 class MainWindow(QWidget):
@@ -473,9 +472,20 @@ class MainWindow(QWidget):
             self.print_error(str(err))
             return
 
-        self.progress.setValue(15)
-        self.worker = Thread(target=simulator_worker, args=[params])
-        self.worker.run()
+        self.progress.setValue(5)
+        self.worker = WorkerThread(params)
+        self.worker.progress.connect(self.progress.setValue)
+        self.worker.finished.connect(self.worker_finished)
+        self.worker.start()
+        self.progress.setValue(8)
+
+    def worker_finished(self):
+        if self.worker.error_message:
+            message = _("Simulation has failed, reason: {}").format(self.worker.error_message)
+            self.print_error(message)
+        else:
+            self.println(_("Simulation completed successfully."))
+        self.worker = None
 
     def closeEvent(self, event: QCloseEvent) -> None:
         if self.worker and self.worker.is_alive():
