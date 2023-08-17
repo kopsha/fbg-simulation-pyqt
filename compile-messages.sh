@@ -30,11 +30,8 @@ compile()
         --output="./${lang}/LC_MESSAGES/fbg-simulation-pyqt.mo"
 }
 
-cd ./translation
-
 # collect all translatable strings
-xgettext ../gui/*.py \
-    --join-existing \
+xgettext gui/*.py \
     --sort-output \
     --foreign-user \
     --copyright-holder="${AUTHOR}" \
@@ -42,10 +39,10 @@ xgettext ../gui/*.py \
     --package-version="v2.0" \
     --msgid-bugs-address="${EMAIL}" \
     --verbose \
-    --output="messages.pot"
+    --output="./translation/messages.pot"
 
+cd ./translation
 for language in ro_RO en_US; do
     compile $language
 done
-
 cd ..
