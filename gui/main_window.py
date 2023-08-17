@@ -187,9 +187,7 @@ class MainWindow(QWidget):
             alignment=Qt.AlignmentFlag.AlignCenter,
         )
 
-        row1, self.resolution = self.make_float_parameter(
-            _("Rezolutia simularii"), "[nm]", "0.05"
-        )
+        row1, self.resolution = self.make_float_parameter(_("Rezolutia simularii"), "[nm]", "0.05")
         row2, self.min_bandwidth = self.make_float_parameter(
             _("Latime de banda minima"), "[nm]", "1500.00"
         )
@@ -399,8 +397,14 @@ class MainWindow(QWidget):
             units=SiUnits(int(self.has_si_units.isChecked())),
             strain_type=self.strain_type,
             stress_type=self.stress_type,
-            emulate_temperature=float(self.emulate_temperature.text()) if self.has_emulate_temperature.isChecked() else None,
-            host_expansion_coefficient=float(self.host_expansion_coefficient.text()) if self.has_host_expansion.isChecked() else None,
+            emulate_temperature=float(self.emulate_temperature.text())
+            if self.has_emulate_temperature.isChecked()
+            else None,
+            host_expansion_coefficient=float(
+                self.host_expansion_coefficient.text()
+                if self.has_host_expansion.isChecked()
+                else self.fiber_expansion_coefficient.text()
+            ),
             resolution=float(self.resolution.text()),
             min_bandwidth=float(self.min_bandwidth.text()),
             max_bandwidth=float(self.max_bandwidth.text()),

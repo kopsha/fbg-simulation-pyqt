@@ -17,6 +17,18 @@ def simulator_worker(params: dict):
 
     if include_underformed_signal:
         underformed_data = simu.undeformed_fbg()
-        print("reflected signal", underformed_data["reflec"][:5])
+        print("undeformed reflected signal", underformed_data["reflec"][:5])
+
+    deformed_data = simu.deformed_fbg(
+        strain_type=StrainTypes.NON_UNIFORM,
+        stress_type=StressTypes.INCLUDED,
+    )
+    print("deformed reflected signal", deformed_data["reflec"][:5])
+
+    summary_data = simu.compute_fbg_shifts_and_widths(
+        strain_type=StrainTypes.NON_UNIFORM,
+        stress_type=StressTypes.INCLUDED,
+    )
+    print(f"{summary_data=}")
 
     print("finished")
