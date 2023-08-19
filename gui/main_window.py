@@ -21,6 +21,7 @@ from PySide6.QtGui import QTextCursor, QDoubleValidator, QCloseEvent
 import translation
 from osa.simulator import StrainTypes, StressTypes, SiUnits
 from gui.worker import WorkerThread
+from gui.plot_window import OsaPlotWindow
 
 
 class MainWindow(QWidget):
@@ -343,6 +344,7 @@ class MainWindow(QWidget):
         simulate_button.clicked.connect(self.run_simulation)
         self.progress = QProgressBar(value=0)
         show_plot_button = QPushButton(_("Deschide grafic simulare"))
+        show_plot_button.clicked.connect(self.showPlot)
 
         layout = QVBoxLayout()
         layout.addWidget(title)
@@ -491,3 +493,7 @@ class MainWindow(QWidget):
         if self.worker and self.worker.is_alive():
             raise RuntimeError("Simulation thread is still in progress.")
         return super().closeEvent(event)
+
+    def showPlot(self):
+        plot = OsaPlotWindow(self)
+        plot.exec()
