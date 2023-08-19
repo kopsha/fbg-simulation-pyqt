@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 from PySide6.QtWidgets import (
     QCheckBox,
     QFileDialog,
@@ -14,21 +15,28 @@ from PySide6.QtWidgets import (
     QTextEdit,
     QVBoxLayout,
     QWidget,
+    QMainWindow,
 )
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QTextCursor, QDoubleValidator, QCloseEvent
 
-import translation
 from osa.simulator import StrainTypes, StressTypes, SiUnits
 from gui.worker import WorkerThread
-from gui.plot_window import OsaPlotWindow
+from gui.plot_window import SpectrumView
 
 
-class MainWindow(QWidget):
-    translation.install("ro")
-
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        view = ParametersView(self)
+        self.setCentralWidget(view)
+
+
+class ParametersView(QWidget):
+
+    def __init__(self, parent: QWidget):
+        super().__init__(parent=parent)
 
         self.worker = None
         self.float_validator = QDoubleValidator(self)
@@ -495,5 +503,5 @@ class MainWindow(QWidget):
         return super().closeEvent(event)
 
     def showPlot(self):
-        plot = OsaPlotWindow(self)
+        plot = SpectrumView(self)
         plot.exec()

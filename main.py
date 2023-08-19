@@ -1,8 +1,9 @@
-#!python3
+#!/usr/bin/env python3
 import sys
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QIcon
 
+import translation
 from gui.main_window import MainWindow
 from version import VERSION
 
@@ -10,8 +11,10 @@ from version import VERSION
 def main(argv):
     app = QApplication(argv)
 
+    translation.install("ro")
+
     window = MainWindow()
-    window.setWindowTitle(f"Simulator FBG v{VERSION} -- (2023) Codruta Toadere")
+    window.setWindowTitle(f"Simulator FBG v{VERSION} (2023)")
     window.setWindowIcon(QIcon("resources/app-icon-96.ico"))
     window.resize(1366, 768)
     window.show()

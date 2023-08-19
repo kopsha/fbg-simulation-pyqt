@@ -4,10 +4,10 @@ from PySide6.QtWidgets import QDialog, QWidget, QHBoxLayout, QLabel, QVBoxLayout
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import (
     FigureCanvasQTAgg as FigureCanvas,
-    NavigationToolbar2QT as NavigationToolbar,
 )
 
-class OsaPlotWindow(QDialog):
+
+class SpectrumView(QDialog):
     def __init__(self, parent: QWidget):
         super().__init__(parent)
         self.setWindowTitle(_("Plot FBG Spectrum"))
@@ -34,9 +34,10 @@ class OsaPlotWindow(QDialog):
         ax.set_title("Sin and Cos Plots")
         ax.legend()
 
-        canvas = FigureCanvas(fig)
-        canvas.draw()
-        layout.addWidget(canvas)
+        self.canvas = FigureCanvas(fig)
+        self.canvas.draw()
+
+        layout.addWidget(self.canvas)
 
         return layout
 
