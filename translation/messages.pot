@@ -8,165 +8,117 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fbg-simulation-pyqt v2.0\n"
 "Report-Msgid-Bugs-To: codrutatoadere@gmail.com\n"
-"POT-Creation-Date: 2023-08-20 17:50+0300\n"
+"POT-Creation-Date: 2023-08-20 18:28+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gui/main_window.py:515
+#: gui/main_window.py:514
 msgid "A simulator session is already running."
 msgstr ""
 
-#: gui/main_window.py:328
+#: gui/main_window.py:326
 msgid "Add"
 msgstr ""
 
-#: gui/main_window.py:93
-msgid "Alege fisier"
-msgstr ""
-
-#: gui/main_window.py:130
-msgid "Alege tipul de deformare"
-msgstr ""
-
-#: gui/main_window.py:149
-msgid "Alege tipul de tensiune"
-msgstr ""
-
-#: gui/main_window.py:127
-msgid "Alege tipul simularii"
+#: gui/main_window.py:207
+msgid "Ambient temperature"
 msgstr ""
 
 #: gui/main_window.py:104
-msgid "Aplica conversia din m in mm"
+msgid "Apply conversion from m to mm"
 msgstr ""
 
-#: gui/main_window.py:500
+#: gui/main_window.py:499
 msgid "At least one wavelength is above the maximum bandwidth setting."
 msgstr ""
 
-#: gui/main_window.py:498
+#: gui/main_window.py:497
 msgid "At least one wavelength is below the minimum bandwidth setting."
 msgstr ""
 
-#: gui/main_window.py:213
-msgid "Atributele fibrei (mod avansat)"
+#: gui/main_window.py:336
+msgid "Auto"
 msgstr ""
 
-#: gui/main_window.py:338
-msgid "Auto"
+#: gui/main_window.py:218
+msgid "Average variation in refractive index"
 msgstr ""
 
 #: gui/plot_window.py:100
 msgid "Axis control"
 msgstr ""
 
-#: gui/main_window.py:235
-msgid "Coeficientul Poisson"
+#: gui/main_window.py:127
+msgid "Choose a simulation type"
 msgstr ""
 
-#: gui/main_window.py:238
-msgid "Coeficientul de dilatatie termica"
+#: gui/main_window.py:93
+msgid "Choose file"
 msgstr ""
 
-#: gui/main_window.py:174
-msgid "Coeficientul de dilatatie termica (host)"
-msgstr ""
-
-#: gui/main_window.py:241
-msgid "Coeficientul termo-optic"
-msgstr ""
-
-#: gui/main_window.py:297
-msgid "Configuratia matricei virtuale FBG"
-msgstr ""
-
-#: gui/main_window.py:229
-msgid "Constanta fotoelastica de taiere (Pockel)"
-msgstr ""
-
-#: gui/main_window.py:226
-msgid "Constanta fotoelastica normala (Pockel)"
-msgstr ""
-
-#: gui/main_window.py:154
-msgid "Cu tensiune transversala"
-msgstr ""
-
-#: gui/main_window.py:103
-msgid "Daca distantele nu sunt exprimate in milimetri [mm]"
-msgstr ""
-
-#: gui/main_window.py:137
-msgid "Deformare longitudinala neuniforma"
-msgstr ""
-
-#: gui/main_window.py:135
-msgid "Deformare longitudinala uniforma"
+#: gui/main_window.py:406
+msgid "Clear log"
 msgstr ""
 
 #: gui/plot_window.py:256
 msgid "Deformed FBG Spectrum"
 msgstr ""
 
-#: gui/main_window.py:387
-msgid "Deschide grafic simulare"
-msgstr ""
-
-#: gui/main_window.py:434
+#: gui/main_window.py:432
 msgid "ERROR"
 msgstr ""
 
-#: gui/main_window.py:166
-msgid "Emuleaza temperatura model"
+#: gui/main_window.py:164
+msgid "Emulate model temperature"
 msgstr ""
 
-#: gui/plot_window.py:205
-msgid "FBG Output"
+#: gui/main_window.py:161
+msgid "Emulation options"
 msgstr ""
 
-#: gui/main_window.py:133
-msgid "Fara deformare"
+#: gui/main_window.py:211
+msgid "Fiber attributes (advanced mode)"
 msgstr ""
 
-#: gui/main_window.py:152
-msgid "Fara tensiune"
+#: gui/main_window.py:236
+msgid "Fiber thermal expansion coefficient"
+msgstr ""
+
+#: gui/main_window.py:221
+msgid "Fringe visibility"
 msgstr ""
 
 #: gui/plot_window.py:85
 msgid "Grid"
 msgstr ""
 
+#: gui/main_window.py:172
+msgid "Host thermal expansion coefficient"
+msgstr ""
+
+#: gui/main_window.py:103
+msgid "If distances are not expressed in millimeters [mm]"
+msgstr ""
+
 #: gui/plot_window.py:292
 msgid "Images"
 msgstr ""
 
-#: gui/main_window.py:429
-msgid "Incarca datele din"
+#: gui/main_window.py:147
+msgid "Include stress"
 msgstr ""
 
-#: gui/main_window.py:383
-msgid "Include semnalul reflectat nedeformat"
+#: gui/main_window.py:381
+msgid "Include the undeformed FBG reflected signal"
 msgstr ""
 
-#: gui/main_window.py:217
-msgid "Indicele de refractie initiala"
-msgstr ""
-
-#: gui/main_window.py:401
-msgid "Jurnal mesaje"
-msgstr ""
-
-#: gui/main_window.py:206
-msgid "Latime de banda maxima"
-msgstr ""
-
-#: gui/main_window.py:203
-msgid "Latime de banda minima"
+#: gui/main_window.py:215
+msgid "Initial refractive index"
 msgstr ""
 
 #: gui/plot_window.py:84
@@ -177,35 +129,51 @@ msgstr ""
 msgid "Line properties"
 msgstr ""
 
+#: gui/main_window.py:427
+msgid "Load data from"
+msgstr ""
+
 #: gui/main_window.py:89
-msgid "Load strain and stress data from file"
+msgid "Load strain / stress data from file"
 msgstr ""
 
-#: gui/main_window.py:302
-msgid "Lungimea"
+#: gui/main_window.py:130
+msgid "Longitudinal strain"
 msgstr ""
 
-#: gui/main_window.py:309
-msgid "Lungimile de unda originale"
+#: gui/main_window.py:204
+msgid "Maximum bandwidth"
 msgstr ""
 
-#: gui/main_window.py:232
-msgid "Modulul de elasticitate (Young)"
+#: gui/main_window.py:399
+msgid "Message log"
 msgstr ""
 
-#: gui/main_window.py:301
-msgid "Numarul de senzori"
+#: gui/main_window.py:201
+msgid "Minimum bandwidth"
 msgstr ""
 
-#: gui/main_window.py:163
-msgid "Optiuni emulare"
+#: gui/main_window.py:136
+msgid "Non-uniform"
 msgstr ""
 
-#: gui/main_window.py:197
-msgid "Parametri simulare"
+#: gui/main_window.py:133 gui/main_window.py:150
+msgid "None"
 msgstr ""
 
-#: gui/main_window.py:358
+#: gui/main_window.py:299
+msgid "Number of FBG sensors"
+msgstr ""
+
+#: gui/main_window.py:385
+msgid "Open simulation results"
+msgstr ""
+
+#: gui/main_window.py:307
+msgid "Original wavelengths"
+msgstr ""
+
+#: gui/main_window.py:356
 msgid "Please enter a value for FBG"
 msgstr ""
 
@@ -217,24 +185,24 @@ msgstr ""
 msgid "Plot options"
 msgstr ""
 
-#: gui/main_window.py:384
-msgid "Porneste simularea"
+#: gui/main_window.py:224 gui/main_window.py:227
+msgid "Pockel's elasto-optic coefficients"
 msgstr ""
 
-#: gui/main_window.py:306
-msgid "Pozitiile senzorilor FBG fata de start"
+#: gui/main_window.py:233
+msgid "Poisson's coefficient"
+msgstr ""
+
+#: gui/main_window.py:304
+msgid "Positions of FBG sensors (distance from the start)"
 msgstr ""
 
 #: gui/plot_window.py:125 gui/plot_window.py:282
 msgid "Reflectivity"
 msgstr ""
 
-#: gui/main_window.py:330
+#: gui/main_window.py:328
 msgid "Remove"
-msgstr ""
-
-#: gui/main_window.py:201
-msgid "Rezolutia simularii"
 msgstr ""
 
 #: gui/plot_window.py:290
@@ -242,10 +210,14 @@ msgid "Save FBG Spectrum Plot"
 msgstr ""
 
 #: gui/plot_window.py:67
-msgid "Save plot figure"
+msgid "Save picture"
 msgstr ""
 
-#: gui/main_window.py:503
+#: gui/main_window.py:300
+msgid "Sensor length"
+msgstr ""
+
+#: gui/main_window.py:502
 msgid "Sensors count ({}) and original wavelengths count ({}) must be equal."
 msgstr ""
 
@@ -253,47 +225,59 @@ msgstr ""
 msgid "Shift"
 msgstr ""
 
-#: gui/main_window.py:378
-msgid "Simulare de spectru"
-msgstr ""
-
 #: gui/plot_window.py:185
 msgid "Simulated color"
 msgstr ""
 
-#: gui/main_window.py:540
+#: gui/main_window.py:539
 msgid "Simulation completed successfully."
 msgstr ""
 
-#: gui/main_window.py:535
+#: gui/main_window.py:534
 msgid "Simulation has failed, reason: {}"
 msgstr ""
 
-#: gui/main_window.py:545
-msgid "Simulation thread is still in progress."
+#: gui/plot_window.py:205
+msgid "Simulation output"
+msgstr ""
+
+#: gui/main_window.py:195
+msgid "Simulation parameters"
+msgstr ""
+
+#: gui/main_window.py:199
+msgid "Simulation resolution"
+msgstr ""
+
+#: gui/main_window.py:376
+msgid "Spectrum simulation"
 msgstr ""
 
 #: gui/plot_window.py:86
 msgid "Split waveform (Birefringence)"
 msgstr ""
 
-#: gui/main_window.py:408
-msgid "Sterge jurnal"
+#: gui/main_window.py:382
+msgid "Start simulation"
 msgstr ""
 
-#: gui/main_window.py:209
-msgid "Temperatura ambientala"
-msgstr ""
-
-#: gui/main_window.py:550
+#: gui/main_window.py:544
 msgid "There is no data to show, please run the simulation first."
 msgstr ""
 
-#: gui/main_window.py:303
-msgid "Toleranta"
+#: gui/main_window.py:239
+msgid "Thermo-optic coefficient"
 msgstr ""
 
-#: gui/main_window.py:488
+#: gui/main_window.py:301
+msgid "Tolerance"
+msgstr ""
+
+#: gui/main_window.py:152
+msgid "Transverse stress"
+msgstr ""
+
+#: gui/main_window.py:487
 msgid "Two consecutive FBG positions cannot be shorter than FBG length."
 msgstr ""
 
@@ -305,12 +289,12 @@ msgstr ""
 msgid "Undeformed color"
 msgstr ""
 
-#: gui/main_window.py:220
-msgid "Variatia medie in indicele de refractie"
+#: gui/main_window.py:135
+msgid "Uniform"
 msgstr ""
 
-#: gui/main_window.py:223
-msgid "Vizibilitatea franjelor"
+#: gui/main_window.py:295
+msgid "Virtual Fiber Bragg Grating array configuration"
 msgstr ""
 
 #: gui/plot_window.py:104 gui/plot_window.py:213 gui/plot_window.py:281
@@ -329,18 +313,22 @@ msgstr ""
 msgid "Y-Wave Contribution"
 msgstr ""
 
+#: gui/main_window.py:230
+msgid "Young's module"
+msgstr ""
+
 #: gui/plot_window.py:272
 msgid "Z-Wave Contribution"
 msgstr ""
 
-#: gui/main_window.py:473
+#: gui/main_window.py:472
 msgid "is not a valid data file."
 msgstr ""
 
-#: gui/main_window.py:306
+#: gui/main_window.py:304
 msgid "position"
 msgstr ""
 
-#: gui/main_window.py:309
+#: gui/main_window.py:307
 msgid "wavelength"
 msgstr ""

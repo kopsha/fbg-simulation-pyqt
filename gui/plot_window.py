@@ -64,7 +64,7 @@ class SpectrumView(QDialog):
 
         summary_group = self.make_summary_group()
 
-        save_button = QPushButton(_("Save plot figure"))
+        save_button = QPushButton(_("Save picture"))
         save_button.clicked.connect(self.savePlotFigure)
 
         layout = QVBoxLayout()
@@ -202,7 +202,7 @@ class SpectrumView(QDialog):
         return line_group
 
     def make_summary_group(self):
-        summary_group = QGroupBox(_("FBG Output"))
+        summary_group = QGroupBox(_("Simulation output"))
         summary_group_layout = QVBoxLayout()
 
         summary_table = QTableView()

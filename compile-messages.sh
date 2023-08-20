@@ -41,8 +41,8 @@ xgettext gui/*.py \
     --verbose \
     --output="./translation/messages.pot"
 
-# cd ./translation
-# for language in ro_RO en_US; do
-#     compile $language
-# done
-# cd ..
+cd ./translation
+for language in ro_RO en_US; do
+    compile $language
+done
+cd ..

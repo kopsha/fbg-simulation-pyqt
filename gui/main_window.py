@@ -9,8 +9,10 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QGroupBox,
     QHBoxLayout,
+    QInputDialog,
     QLabel,
     QLineEdit,
+    QMainWindow,
     QProgressBar,
     QPushButton,
     QRadioButton,
@@ -18,8 +20,6 @@ from PySide6.QtWidgets import (
     QTextEdit,
     QVBoxLayout,
     QWidget,
-    QMainWindow,
-    QInputDialog,
 )
 from PySide6.QtCore import Qt, Slot, QCoreApplication
 from PySide6.QtGui import QTextCursor, QDoubleValidator, QCloseEvent
@@ -86,7 +86,7 @@ class ParametersView(QWidget):
 
     def make_loader_section(self, section_id: int):
         title = QLabel(
-            "<b>({}) {}</b>".format(section_id, _("Load strain and stress data from file"))
+            "<b>({}) {}</b>".format(section_id, _("Load strain / stress data from file"))
         )
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -100,8 +100,8 @@ class ParametersView(QWidget):
         row.addWidget(self.filepath)
         row.addWidget(load_button)
 
-        si_units_group = QGroupBox(_("Daca distantele nu sunt exprimate in milimetri [mm]"))
-        self.has_si_units = QCheckBox(_("Aplica conversia din m in mm"), si_units_group)
+        si_units_group = QGroupBox(_("If distances are not expressed in millimeters [mm]"))
+        self.has_si_units = QCheckBox(_("Apply conversion from m to mm"), si_units_group)
         group_layout = QVBoxLayout()
         group_layout.addWidget(self.has_si_units)
         si_units_group.setLayout(group_layout)
@@ -124,18 +124,16 @@ class ParametersView(QWidget):
         self.strain_type = StrainTypes.NONE
         self.stress_type = StressTypes.NONE
 
-        title = QLabel("<b>({}) {}</b>".format(section_id, _("Alege tipul simularii")))
+        title = QLabel("<b>({}) {}</b>".format(section_id, _("Choose a simulation type")))
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        strain_type_group = QGroupBox(_("Alege tipul de deformare"))
+        strain_type_group = QGroupBox(_("Longitudinal strain"))
         strain_group_layout = QVBoxLayout()
 
-        no_strain = QRadioButton(_("Fara deformare"), strain_type_group)
+        no_strain = QRadioButton(_("None"), strain_type_group)
         no_strain.setChecked(True)
-        uniform_strain = QRadioButton(_("Deformare longitudinala uniforma"), strain_type_group)
-        non_uniform_strain = QRadioButton(
-            _("Deformare longitudinala neuniforma"), strain_type_group
-        )
+        uniform_strain = QRadioButton(_("Uniform"), strain_type_group)
+        non_uniform_strain = QRadioButton(_("Non-uniform"), strain_type_group)
 
         no_strain.clicked.connect(lambda: set_strain_type(StrainTypes.NONE))
         uniform_strain.clicked.connect(lambda: set_strain_type(StrainTypes.UNIFORM))
@@ -146,12 +144,12 @@ class ParametersView(QWidget):
         strain_group_layout.addWidget(non_uniform_strain)
         strain_type_group.setLayout(strain_group_layout)
 
-        stress_type_group = QGroupBox(_("Alege tipul de tensiune"))
+        stress_type_group = QGroupBox(_("Include stress"))
         stress_group_layout = QVBoxLayout()
 
-        no_stress = QRadioButton(_("Fara tensiune"), stress_type_group)
+        no_stress = QRadioButton(_("None"), stress_type_group)
         no_stress.setChecked(True)
-        included_stress = QRadioButton(_("Cu tensiune transversala"), stress_type_group)
+        included_stress = QRadioButton(_("Transverse stress"), stress_type_group)
 
         no_stress.clicked.connect(lambda: set_stress_type(StressTypes.NONE))
         included_stress.clicked.connect(lambda: set_stress_type(StressTypes.INCLUDED))
@@ -160,10 +158,10 @@ class ParametersView(QWidget):
         stress_group_layout.addWidget(included_stress)
         stress_type_group.setLayout(stress_group_layout)
 
-        emulation_group = QGroupBox(_("Optiuni emulare"))
+        emulation_group = QGroupBox(_("Emulation options"))
 
         row1, self.emulate_temperature = self.make_float_parameter(
-            _("Emuleaza temperatura model"), "[K]", "293.15"
+            _("Emulate model temperature"), "[K]", "293.15"
         )
         self.has_emulate_temperature = QCheckBox(emulation_group)
         self.emulate_temperature.setEnabled(False)
@@ -171,7 +169,7 @@ class ParametersView(QWidget):
         row1.insertWidget(0, self.has_emulate_temperature)
 
         row2, self.host_expansion_coefficient = self.make_float_parameter(
-            _("Coeficientul de dilatatie termica (host)"), "[K<sup>-1</sup>]", "5e-5"
+            _("Host thermal expansion coefficient"), "[K<sup>-1</sup>]", "5e-5"
         )
         self.has_host_expansion = QCheckBox(emulation_group)
         self.host_expansion_coefficient.setEnabled(False)
@@ -194,51 +192,51 @@ class ParametersView(QWidget):
 
     def make_parameters_section(self, section_id: int):
         title = QLabel(
-            "<b>({}) {}</b>".format(section_id, _("Parametri simulare")),
+            "<b>({}) {}</b>".format(section_id, _("Simulation parameters")),
             alignment=Qt.AlignmentFlag.AlignCenter,
         )
 
-        row1, self.resolution = self.make_float_parameter(_("Rezolutia simularii"), "[nm]", "0.05")
+        row1, self.resolution = self.make_float_parameter(_("Simulation resolution"), "[nm]", "0.05")
         row2, self.min_bandwidth = self.make_float_parameter(
-            _("Latime de banda minima"), "[nm]", "1500.00"
+            _("Minimum bandwidth"), "[nm]", "1500.00"
         )
         row3, self.max_bandwidth = self.make_float_parameter(
-            _("Latime de banda maxima"), "[nm]", "1600.00"
+            _("Maximum bandwidth"), "[nm]", "1600.00"
         )
         row4, self.ambient_temperature = self.make_float_parameter(
-            _("Temperatura ambientala"), "[K]", "293.15"
+            _("Ambient temperature"), "[K]", "293.15"
         )
 
         advanded_group = QGroupBox(
-            _("Atributele fibrei (mod avansat)"), checkable=True, checked=False
+            _("Fiber attributes (advanced mode)"), checkable=True, checked=False
         )
 
         row5, self.initial_refractive_index = self.make_float_parameter(
-            _("Indicele de refractie initiala"), "[n<sub>eff</sub>]", "1.46"
+            _("Initial refractive index"), "[n<sub>eff</sub>]", "1.46"
         )
         row6, self.mean_change_refractive_index = self.make_float_parameter(
-            _("Variatia medie in indicele de refractie"), "[δn<sub>eff</sub>]", "4.5e-4"
+            _("Average variation in refractive index"), "[δn<sub>eff</sub>]", "4.5e-4"
         )
         row7, self.fringe_visibility = self.make_float_parameter(
-            _("Vizibilitatea franjelor"), "%", "1.0"
+            _("Fringe visibility"), "%", "1.0"
         )
         row8, self.directional_refractive_p11 = self.make_float_parameter(
-            _("Constanta fotoelastica normala (Pockel)"), "p<sub>11</sub>", "0.121"
+            _("Pockel's elasto-optic coefficients"), "p<sub>11</sub>", "0.121"
         )
         row9, self.directional_refractive_p12 = self.make_float_parameter(
-            _("Constanta fotoelastica de taiere (Pockel)"), "p<sub>12</sub>", "0.270"
+            _("Pockel's elasto-optic coefficients"), "p<sub>12</sub>", "0.270"
         )
         row10, self.youngs_mod = self.make_float_parameter(
-            _("Modulul de elasticitate (Young)"), "[Pa]", "75e9"
+            _("Young's module"), "[Pa]", "75e9"
         )
         row11, self.poissons_coefficient = self.make_float_parameter(
-            _("Coeficientul Poisson"), "", "0.17"
+            _("Poisson's coefficient"), "", "0.17"
         )
         row12, self.fiber_expansion_coefficient = self.make_float_parameter(
-            _("Coeficientul de dilatatie termica"), "[K<sup>-1</sup>]", "0.55e-6"
+            _("Fiber thermal expansion coefficient"), "[K<sup>-1</sup>]", "0.55e-6"
         )
         row13, self.thermo_optic = self.make_float_parameter(
-            _("Coeficientul termo-optic"), "[K<sup>-1</sup>]", "8.3e-6"
+            _("Thermo-optic coefficient"), "[K<sup>-1</sup>]", "8.3e-6"
         )
 
         advanced_group_layout = QVBoxLayout()
@@ -294,19 +292,19 @@ class ParametersView(QWidget):
 
     def make_virtual_configuration_section(self, section_id: int):
         title = QLabel(
-            "<b>({}) {}</b>".format(section_id, _("Configuratia matricei virtuale FBG")),
+            "<b>({}) {}</b>".format(section_id, _("Virtual Fiber Bragg Grating array configuration")),
             alignment=Qt.AlignmentFlag.AlignCenter,
         )
 
-        row1, self.fbg_count = self.make_int_parameter(_("Numarul de senzori"), "", "1")
-        row2, self.fbg_length = self.make_float_parameter(_("Lungimea"), "mm", "10.0")
-        row3, self.tolerance = self.make_float_parameter(_("Toleranta"), "mm", "0.01")
+        row1, self.fbg_count = self.make_int_parameter(_("Number of FBG sensors"), "", "1")
+        row2, self.fbg_length = self.make_float_parameter(_("Sensor length"), "mm", "10.0")
+        row3, self.tolerance = self.make_float_parameter(_("Tolerance"), "mm", "0.01")
 
         positions_group, self.fbg_positions = self.make_float_list_parameter(
-            _("Pozitiile senzorilor FBG fata de start"), "[mm]", _("position"),
+            _("Positions of FBG sensors (distance from the start)"), "[mm]", _("position"),
         )
         wavelengths_group, self.original_wavelengths = self.make_float_list_parameter(
-            _("Lungimile de unda originale"), "[nm]", _("wavelength"), with_auto=True
+            _("Original wavelengths"), "[nm]", _("wavelength"), with_auto=True
         )
 
         layout = QVBoxLayout()
@@ -375,16 +373,16 @@ class ParametersView(QWidget):
 
     def make_spectrum_section(self, section_id: int):
         title = QLabel(
-            "<b>({}) {}</b>".format(section_id, _("Simulare de spectru")),
+            "<b>({}) {}</b>".format(section_id, _("Spectrum simulation")),
             alignment=Qt.AlignmentFlag.AlignCenter,
         )
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.has_reflected_signal = QCheckBox(_("Include semnalul reflectat nedeformat"))
-        simulate_button = QPushButton(_("Porneste simularea"))
+        self.has_reflected_signal = QCheckBox(_("Include the undeformed FBG reflected signal"), checked=True)
+        simulate_button = QPushButton(_("Start simulation"))
         simulate_button.clicked.connect(self.run_simulation)
         self.progress = QProgressBar(value=0)
-        show_plot_button = QPushButton(_("Deschide grafic simulare"))
+        show_plot_button = QPushButton(_("Open simulation results"))
         show_plot_button.clicked.connect(self.showPlot)
 
         layout = QVBoxLayout()
@@ -398,14 +396,14 @@ class ParametersView(QWidget):
 
     def make_journal_section(self, section_id: int):
         title = QLabel(
-            "<b>({}) {}</b>".format(section_id, _("Jurnal mesaje")),
+            "<b>({}) {}</b>".format(section_id, _("Message log")),
             alignment=Qt.AlignmentFlag.AlignCenter,
         )
 
         self.console = QTextEdit(self)
         self.console.setReadOnly(True)
 
-        clear_button = QPushButton(_("Sterge jurnal"), self)
+        clear_button = QPushButton(_("Clear log"), self)
         clear_button.clicked.connect(self.console.clear)
 
         layout = QVBoxLayout()
@@ -426,7 +424,7 @@ class ParametersView(QWidget):
 
     def load_file(self):
         fullpath, filter = QFileDialog.getOpenFileName(
-            self, _("Incarca datele din"), "./sample", "text (*.txt)"
+            self, _("Load data from"), "./sample", "text (*.txt)"
         )
         self.filepath.setText(fullpath)
 
@@ -435,6 +433,7 @@ class ParametersView(QWidget):
 
     def validate_params(self):
         """Collect all simulation parameters from self and validate them."""
+
         params = dict(
             units=SiUnits(int(self.has_si_units.isChecked())),
             strain_type=self.strain_type,
@@ -539,11 +538,6 @@ class ParametersView(QWidget):
             self.simulation_data["params"] = self.worker.params
             self.println(_("Simulation completed successfully."))
         self.worker = None
-
-    def closeEvent(self, event: QCloseEvent) -> None:
-        if self.worker and self.worker.is_alive():
-            raise RuntimeError(_("Simulation thread is still in progress."))
-        return super().closeEvent(event)
 
     def showPlot(self):
         if self.simulation_data is None:
