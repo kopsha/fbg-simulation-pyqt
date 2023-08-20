@@ -1,0 +1,334 @@
+# English translations for fbg-simulation-pyqt package.
+# Copyright (C) 2023 Codruta Toadere
+# This file is distributed under the same license as the fbg-simulation-pyqt package.
+# Codruta Toadere <codrutatoadere@gmail.com>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: fbg-simulation-pyqt v2.0\n"
+"Report-Msgid-Bugs-To: codrutatoadere@gmail.com\n"
+"POT-Creation-Date: 2023-08-20 18:28+0300\n"
+"PO-Revision-Date: 2023-08-20 18:28+0300\n"
+"Last-Translator: Codruta Toadere <codrutatoadere@gmail.com>\n"
+"Language-Team: English\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: gui/main_window.py:514
+msgid "A simulator session is already running."
+msgstr "A simulator session is already running."
+
+#: gui/main_window.py:326
+msgid "Add"
+msgstr "Add"
+
+#: gui/main_window.py:207
+msgid "Ambient temperature"
+msgstr "Ambient temperature"
+
+#: gui/main_window.py:104
+msgid "Apply conversion from m to mm"
+msgstr "Apply conversion from m to mm"
+
+#: gui/main_window.py:499
+msgid "At least one wavelength is above the maximum bandwidth setting."
+msgstr "At least one wavelength is above the maximum bandwidth setting."
+
+#: gui/main_window.py:497
+msgid "At least one wavelength is below the minimum bandwidth setting."
+msgstr "At least one wavelength is below the minimum bandwidth setting."
+
+#: gui/main_window.py:336
+msgid "Auto"
+msgstr "Auto"
+
+#: gui/main_window.py:218
+msgid "Average variation in refractive index"
+msgstr "Average variation in refractive index"
+
+#: gui/plot_window.py:100
+msgid "Axis control"
+msgstr "Axis control"
+
+#: gui/main_window.py:127
+msgid "Choose a simulation type"
+msgstr "Choose a simulation type"
+
+#: gui/main_window.py:93
+msgid "Choose file"
+msgstr "Choose file"
+
+#: gui/main_window.py:406
+msgid "Clear log"
+msgstr "Clear log"
+
+#: gui/plot_window.py:256
+msgid "Deformed FBG Spectrum"
+msgstr "Deformed FBG Spectrum"
+
+#: gui/main_window.py:432
+msgid "ERROR"
+msgstr "ERROR"
+
+#: gui/main_window.py:164
+msgid "Emulate model temperature"
+msgstr "Emulate model temperature"
+
+#: gui/main_window.py:161
+msgid "Emulation options"
+msgstr "Emulation options"
+
+#: gui/main_window.py:211
+msgid "Fiber attributes (advanced mode)"
+msgstr "Fiber attributes (advanced mode)"
+
+#: gui/main_window.py:236
+msgid "Fiber thermal expansion coefficient"
+msgstr "Fiber thermal expansion coefficient"
+
+#: gui/main_window.py:221
+msgid "Fringe visibility"
+msgstr "Fringe visibility"
+
+#: gui/plot_window.py:85
+msgid "Grid"
+msgstr "Grid"
+
+#: gui/main_window.py:172
+msgid "Host thermal expansion coefficient"
+msgstr "Host thermal expansion coefficient"
+
+#: gui/main_window.py:103
+msgid "If distances are not expressed in millimeters [mm]"
+msgstr "If distances are not expressed in millimeters [mm]"
+
+#: gui/plot_window.py:292
+msgid "Images"
+msgstr "Images"
+
+#: gui/main_window.py:147
+msgid "Include stress"
+msgstr "Include stress"
+
+#: gui/main_window.py:381
+msgid "Include the undeformed FBG reflected signal"
+msgstr "Include the undeformed FBG reflected signal"
+
+#: gui/main_window.py:215
+msgid "Initial refractive index"
+msgstr "Initial refractive index"
+
+#: gui/plot_window.py:84
+msgid "Legend"
+msgstr "Legend"
+
+#: gui/plot_window.py:167
+msgid "Line properties"
+msgstr "Line properties"
+
+#: gui/main_window.py:427
+msgid "Load data from"
+msgstr "Load data from"
+
+#: gui/main_window.py:89
+msgid "Load strain / stress data from file"
+msgstr "Load strain / stress data from file"
+
+#: gui/main_window.py:130
+msgid "Longitudinal strain"
+msgstr "Longitudinal strain"
+
+#: gui/main_window.py:204
+msgid "Maximum bandwidth"
+msgstr "Maximum bandwidth"
+
+#: gui/main_window.py:399
+msgid "Message log"
+msgstr "Message log"
+
+#: gui/main_window.py:201
+msgid "Minimum bandwidth"
+msgstr "Minimum bandwidth"
+
+#: gui/main_window.py:136
+msgid "Non-uniform"
+msgstr "Non-uniform"
+
+#: gui/main_window.py:133 gui/main_window.py:150
+msgid "None"
+msgstr "None"
+
+#: gui/main_window.py:299
+msgid "Number of FBG sensors"
+msgstr "Number of FBG sensors"
+
+#: gui/main_window.py:385
+msgid "Open simulation results"
+msgstr "Open simulation results"
+
+#: gui/main_window.py:307
+msgid "Original wavelengths"
+msgstr "Original wavelengths"
+
+#: gui/main_window.py:356
+msgid "Please enter a value for FBG"
+msgstr "Please enter a value for FBG"
+
+#: gui/plot_window.py:33
+msgid "Plot FBG Spectrum"
+msgstr "Plot FBG Spectrum"
+
+#: gui/plot_window.py:81
+msgid "Plot options"
+msgstr "Plot options"
+
+#: gui/main_window.py:224 gui/main_window.py:227
+msgid "Pockel's elasto-optic coefficients"
+msgstr "Pockel's elasto-optic coefficients"
+
+#: gui/main_window.py:233
+msgid "Poisson's coefficient"
+msgstr "Poisson's coefficient"
+
+#: gui/main_window.py:304
+msgid "Positions of FBG sensors (distance from the start)"
+msgstr "Positions of FBG sensors (distance from the start)"
+
+#: gui/plot_window.py:125 gui/plot_window.py:282
+msgid "Reflectivity"
+msgstr "Reflectivity"
+
+#: gui/main_window.py:328
+msgid "Remove"
+msgstr "Remove"
+
+#: gui/plot_window.py:290
+msgid "Save FBG Spectrum Plot"
+msgstr "Save FBG Spectrum Plot"
+
+#: gui/plot_window.py:67
+msgid "Save picture"
+msgstr "Save picture"
+
+#: gui/main_window.py:300
+msgid "Sensor length"
+msgstr "Sensor length"
+
+#: gui/main_window.py:502
+msgid "Sensors count ({}) and original wavelengths count ({}) must be equal."
+msgstr "Sensors count ({}) and original wavelengths count ({}) must be equal."
+
+#: gui/plot_window.py:213
+msgid "Shift"
+msgstr "Shift"
+
+#: gui/plot_window.py:185
+msgid "Simulated color"
+msgstr "Simulated color"
+
+#: gui/main_window.py:539
+msgid "Simulation completed successfully."
+msgstr "Simulation completed successfully."
+
+#: gui/main_window.py:534
+msgid "Simulation has failed, reason: {}"
+msgstr "Simulation has failed, reason: {}"
+
+#: gui/plot_window.py:205
+msgid "Simulation output"
+msgstr "Simulation output"
+
+#: gui/main_window.py:195
+msgid "Simulation parameters"
+msgstr "Simulation parameters"
+
+#: gui/main_window.py:199
+msgid "Simulation resolution"
+msgstr "Simulation resolution"
+
+#: gui/main_window.py:376
+msgid "Spectrum simulation"
+msgstr "Spectrum simulation"
+
+#: gui/plot_window.py:86
+msgid "Split waveform (Birefringence)"
+msgstr "Split waveform (Birefringence)"
+
+#: gui/main_window.py:382
+msgid "Start simulation"
+msgstr "Start simulation"
+
+#: gui/main_window.py:544
+msgid "There is no data to show, please run the simulation first."
+msgstr "There is no data to show, please run the simulation first."
+
+#: gui/main_window.py:239
+msgid "Thermo-optic coefficient"
+msgstr "Thermo-optic coefficient"
+
+#: gui/main_window.py:301
+msgid "Tolerance"
+msgstr "Tolerance"
+
+#: gui/main_window.py:152
+msgid "Transverse stress"
+msgstr "Transverse stress"
+
+#: gui/main_window.py:487
+msgid "Two consecutive FBG positions cannot be shorter than FBG length."
+msgstr "Two consecutive FBG positions cannot be shorter than FBG length."
+
+#: gui/plot_window.py:248
+msgid "Undeformed FBG Spectrum"
+msgstr "Undeformed FBG Spectrum"
+
+#: gui/plot_window.py:180
+msgid "Undeformed color"
+msgstr "Undeformed color"
+
+#: gui/main_window.py:135
+msgid "Uniform"
+msgstr "Uniform"
+
+#: gui/main_window.py:295
+msgid "Virtual Fiber Bragg Grating array configuration"
+msgstr "Virtual Fiber Bragg Grating array configuration"
+
+#: gui/plot_window.py:104 gui/plot_window.py:213 gui/plot_window.py:281
+msgid "Wavelength"
+msgstr "Wavelength"
+
+#: gui/plot_window.py:170
+msgid "Width"
+msgstr "Width"
+
+#: gui/plot_window.py:213
+msgid "Width Variation"
+msgstr "Width Variation"
+
+#: gui/plot_window.py:265
+msgid "Y-Wave Contribution"
+msgstr "Y-Wave Contribution"
+
+#: gui/main_window.py:230
+msgid "Young's module"
+msgstr "Young's module"
+
+#: gui/plot_window.py:272
+msgid "Z-Wave Contribution"
+msgstr "Z-Wave Contribution"
+
+#: gui/main_window.py:472
+msgid "is not a valid data file."
+msgstr "is not a valid data file."
+
+#: gui/main_window.py:304
+msgid "position"
+msgstr "position"
+
+#: gui/main_window.py:307
+msgid "wavelength"
+msgstr "wavelength"
