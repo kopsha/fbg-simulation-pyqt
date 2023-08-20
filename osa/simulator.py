@@ -420,6 +420,8 @@ class OsaSimulator:
         combined_reflection["reflec"] = np.add(
             np.divide(y_reflection["reflec"], 2.0), np.divide(z_reflection["reflec"], 2.0)
         )
+        combined_reflection["Y_split"] = y_reflection
+        combined_reflection["Z_split"] = z_reflection
 
         return combined_reflection
 

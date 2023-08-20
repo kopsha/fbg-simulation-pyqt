@@ -25,37 +25,35 @@ from matplotlib.backends.backend_qtagg import (
 
 
 class SpectrumView(QDialog):
-    def __init__(self, parent: QWidget):
+    USE_COLORS = "orange,red,blue,green,purple,black".split(",")
+
+    def __init__(self, parent: QWidget, data: dict):
         super().__init__(parent)
         self.setWindowTitle(_("Plot FBG Spectrum"))
         self.setGeometry(512, 256, 1280, 768)
+
+        self.data = data
 
         self.setup_ui()
 
     def setup_ui(self):
         layout = QHBoxLayout(self)
 
-        plot_layout = self.make_plot_layout()
-        layout.addLayout(plot_layout, 68)
-
         side_layout = self.make_side_layout()
+        plot_layout = self.make_plot_layout()
+
+        layout.addLayout(plot_layout, 68)
         layout.addLayout(side_layout, 32)
+
+        self.refresh_plot()
 
     def make_plot_layout(self):
         layout = QVBoxLayout()
 
-        fig, ax = plt.subplots()
-        x = np.linspace(0, 10, 100)
-        ax.plot(x, np.sin(x), label="sin(x)")
-        ax.plot(x, np.cos(x), label="cos(x)")
-        ax.set_title("Sin and Cos Plots")
-        ax.legend()
-
-        self.canvas = FigureCanvas(fig)
-        self.canvas.draw()
+        self.fig, self.ax = plt.subplots()
+        self.canvas = FigureCanvas(self.fig)
 
         layout.addWidget(self.canvas)
-
         return layout
 
     def make_side_layout(self):
@@ -81,13 +79,17 @@ class SpectrumView(QDialog):
         options_group = QGroupBox(_("Plot options"))
         options_group_layout = QVBoxLayout()
 
-        legend = QCheckBox(_("Legend"), options_group, checked=True)
-        grid = QCheckBox(_("Grid"), options_group, checked=False)
-        split = QCheckBox(_("Split waveform (Birefringence)"), options_group, checked=False)
+        self.legend = QCheckBox(_("Legend"), options_group, checked=True)
+        self.grid = QCheckBox(_("Grid"), options_group, checked=False)
+        self.split = QCheckBox(_("Split waveform (Birefringence)"), options_group, checked=False)
 
-        options_group_layout.addWidget(legend)
-        options_group_layout.addWidget(grid)
-        options_group_layout.addWidget(split)
+        self.legend.clicked.connect(self.refresh_plot)
+        self.grid.clicked.connect(self.refresh_plot)
+        self.split.clicked.connect(self.refresh_plot)
+
+        options_group_layout.addWidget(self.legend)
+        options_group_layout.addWidget(self.grid)
+        options_group_layout.addWidget(self.split)
         options_group.setLayout(options_group_layout)
 
         return options_group
@@ -159,7 +161,7 @@ class SpectrumView(QDialog):
         line_group_layout = QGridLayout()
 
         line_width_label = QLabel(_("Width"), line_group)
-        line_width = QDoubleSpinBox(
+        self.line_width = QDoubleSpinBox(
             line_group,
             minimum=0.1,
             maximum=5.0,
@@ -168,20 +170,22 @@ class SpectrumView(QDialog):
             suffix=" pt",
             alignment=Qt.AlignmentFlag.AlignRight,
         )
-        underformed_color_label = QLabel(_("Undeformed color"), line_group)
-        underformed_color = QComboBox(line_group)
-        underformed_color.addItems("red,orange,blue,green,black".split(","))
+        undeformed_color_label = QLabel(_("Undeformed color"), line_group)
+        self.undeformed_color = QComboBox(line_group)
+        self.undeformed_color.addItems(self.USE_COLORS)
+        self.undeformed_color.setCurrentText("blue")
 
         simulated_color_label = QLabel(_("Simulated color"), line_group)
-        simulated_color = QComboBox(line_group)
-        simulated_color.addItems("red,orange,blue,green,black".split(","))
+        self.simulated_color = QComboBox(line_group)
+        self.simulated_color.addItems(self.USE_COLORS)
+        self.simulated_color.setCurrentText("orange")
 
         line_group_layout.addWidget(line_width_label, 0, 0)
-        line_group_layout.addWidget(line_width, 0, 1)
-        line_group_layout.addWidget(underformed_color_label, 1, 0)
-        line_group_layout.addWidget(underformed_color, 1, 1)
+        line_group_layout.addWidget(self.line_width, 0, 1)
+        line_group_layout.addWidget(undeformed_color_label, 1, 0)
+        line_group_layout.addWidget(self.undeformed_color, 1, 1)
         line_group_layout.addWidget(simulated_color_label, 2, 0)
-        line_group_layout.addWidget(simulated_color, 2, 1)
+        line_group_layout.addWidget(self.simulated_color, 2, 1)
         line_group.setLayout(line_group_layout)
 
         return line_group
@@ -200,14 +204,69 @@ class SpectrumView(QDialog):
         horizontal_header = summary_table.horizontalHeader()
         horizontal_header.setSectionResizeMode(QHeaderView.ResizeToContents)
 
-        self.add_summary_row(model, ["15cm", "2mm", "1mm"])
-        self.add_summary_row(model, ["20cm", "3mm", "1.5mm"])
+        self.read_data_rows(model)
 
         summary_group_layout.addWidget(summary_table)
         summary_group.setLayout(summary_group_layout)
 
         return summary_group
 
+    def read_data_rows(self, model):
+        for i in range(self.data["params"]["fbg_count"]):
+            key = f"FBG{i+1}"
+            wave_length = "{} nm".format(self.data["params"]["original_wavelengths"][i])
+            wave_shift = "{:.15f} nm".format(self.data["summary"][key]["wave_shift"])
+            wave_width = "{:.15f} nm".format(self.data["summary"][key]["wave_width"])
+            self.add_summary_row(model, [wave_length, wave_shift, wave_width])
+
     def add_summary_row(self, model, data):
         items = [QStandardItem(str(datum)) for datum in data]
+        for item in items:
+            item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
         model.appendRow(items)
+
+    def refresh_plot(self):
+        self.ax.clear()
+
+        if self.data["undeformed"]:
+            self.ax.plot(
+                self.data["undeformed"]["wavelength"],
+                self.data["undeformed"]["reflec"],
+                color=self.undeformed_color.currentText(),
+                linewidth=self.line_width.value(),
+                label=_("Undeformed FBG Spectrum"),
+            )
+
+        self.ax.plot(
+            self.data["deformed"]["wavelength"],
+            self.data["deformed"]["reflec"],
+            color=self.simulated_color.currentText(),
+            linewidth=self.line_width.value(),
+            label=_("Deformed FBG Spectrum"),
+        )
+
+        if self.split.isChecked():
+            self.ax.plot(
+                self.data["deformed"]["Y_split"]["wavelength"],
+                self.data["deformed"]["Y_split"]["reflec"],
+                color="red",
+                linewidth=self.line_width.value(),
+                label=_("Y-Wave Contribution"),
+            )
+            self.ax.plot(
+                self.data["deformed"]["Z_split"]["wavelength"],
+                self.data["deformed"]["Z_split"]["reflec"],
+                color="green",
+                linewidth=self.line_width.value(),
+                label=_("Z-Wave Contribution"),
+            )
+
+        if self.legend.isChecked():
+            self.ax.legend()
+
+        if self.grid.isChecked():
+            self.ax.grid()
+
+        self.ax.set_xlabel("{} [nm]".format(_("Wavelength")))
+        self.ax.set_ylabel("{} [R]".format(_("Reflectivity")))
+        self.canvas.draw()

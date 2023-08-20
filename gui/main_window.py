@@ -38,6 +38,8 @@ class ParametersView(QWidget):
         super().__init__(parent=parent)
 
         self.worker = None
+        self.simulation_data = None
+
         self.float_validator = QDoubleValidator(self)
         self.setup_ui()
 
@@ -474,6 +476,7 @@ class ParametersView(QWidget):
             self.print_error(_("A simulator session is already in progress."))
             return
 
+        self.simulation_data = None
         self.progress.setValue(0)
         try:
             params = self.validate_params()
@@ -493,14 +496,20 @@ class ParametersView(QWidget):
             message = _("Simulation has failed, reason: {}").format(self.worker.error_message)
             self.print_error(message)
         else:
+            self.simulation_data = self.worker.data
+            self.simulation_data["params"] = self.worker.params
             self.println(_("Simulation completed successfully."))
         self.worker = None
 
     def closeEvent(self, event: QCloseEvent) -> None:
         if self.worker and self.worker.is_alive():
-            raise RuntimeError("Simulation thread is still in progress.")
+            raise RuntimeError(_("Simulation thread is still in progress."))
         return super().closeEvent(event)
 
     def showPlot(self):
-        plot = SpectrumView(self)
+        if self.simulation_data is None:
+            self.print_error(_("There is no data to show, please run the simulation first."))
+            return
+
+        plot = SpectrumView(self, data=self.simulation_data)
         plot.exec()

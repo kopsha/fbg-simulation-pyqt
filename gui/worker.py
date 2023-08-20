@@ -9,12 +9,13 @@ class WorkerThread(QThread):
         super().__init__()
 
         self.units = params.pop("units")
-        self.include_underformed_signal = params.pop("has_reflected_signal")
+        self.include_undeformed_signal = params.pop("has_reflected_signal")
         self.strain_type = params.pop("strain_type")
         self.stress_type = params.pop("stress_type")
         self.datafile = params.pop("filepath")
         self.params = params
         self.error_message = ""
+        self.data = None
 
     def run(self):
         self.progress.emit(13)
@@ -23,9 +24,10 @@ class WorkerThread(QThread):
             simu.from_file(filepath=self.datafile, units=self.units)
             self.progress.emit(21)
 
-            if self.include_underformed_signal:
-                underformed_data = simu.undeformed_fbg()
-                print("undeformed reflected signal", underformed_data["reflec"][:5])
+            undeformed_data = None
+            if self.include_undeformed_signal:
+                undeformed_data = simu.undeformed_fbg()
+                print("undeformed reflected signal", undeformed_data["reflec"][:5])
                 self.progress.emit(34)
 
             self.progress.emit(55)
@@ -45,3 +47,9 @@ class WorkerThread(QThread):
 
         except Exception as err:
             self.error_message = str(err)
+
+        self.data = dict(
+            undeformed=undeformed_data,
+            deformed=deformed_data,
+            summary=summary_data,
+        )
