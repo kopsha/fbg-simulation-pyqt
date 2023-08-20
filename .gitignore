@@ -3,6 +3,7 @@
 .venv/
 *~
 translation/**/
+sample/*.png
 
 # Python precompiled
 __pycache__/

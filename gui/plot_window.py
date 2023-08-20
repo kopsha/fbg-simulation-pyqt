@@ -16,6 +16,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QTableView,
     QHeaderView,
+    QFileDialog,
 )
 from PySide6.QtGui import QStandardItem, QStandardItemModel
 import matplotlib.pyplot as plt
@@ -63,7 +64,8 @@ class SpectrumView(QDialog):
 
         summary_group = self.make_summary_group()
 
-        save_button = QPushButton(_("Save picture"))
+        save_button = QPushButton(_("Save plot figure"))
+        save_button.clicked.connect(self.savePlotFigure)
 
         layout = QVBoxLayout()
         layout.addWidget(options_group)
@@ -100,55 +102,60 @@ class SpectrumView(QDialog):
 
         x_between = QLabel("↔", axis_group)
         x_label = QLabel(_("Wavelength"), axis_group)
-        x_min = QSpinBox(
+        self.xmin = QSpinBox(
             axis_group,
             minimum=1000,
             maximum=2000,
             singleStep=10,
-            value=1500,
+            value=1490,
             suffix=" nm",
             alignment=Qt.AlignmentFlag.AlignRight,
         )
-        x_max = QSpinBox(
+        self.xmax = QSpinBox(
             axis_group,
             minimum=1000,
             maximum=2000,
             singleStep=10,
-            value=1600,
+            value=1610,
             suffix=" nm",
             alignment=Qt.AlignmentFlag.AlignRight,
         )
 
         y_between = QLabel("↔", axis_group)
         y_label = QLabel(_("Reflectivity"), axis_group)
-        y_min = QDoubleSpinBox(
+        self.ymin = QDoubleSpinBox(
             axis_group,
             minimum=-0.5,
             maximum=2.0,
             singleStep=0.1,
-            value=0.0,
+            value=-0.1,
             suffix=" R",
             alignment=Qt.AlignmentFlag.AlignRight,
         )
-        y_max = QDoubleSpinBox(
+        self.ymax = QDoubleSpinBox(
             axis_group,
             minimum=-0.5,
             maximum=2.0,
             singleStep=0.1,
-            value=1.0,
+            value=1.1,
             suffix=" R",
             alignment=Qt.AlignmentFlag.AlignRight,
         )
+
+        self.xmin.valueChanged.connect(self.refresh_plot)
+        self.xmax.valueChanged.connect(self.refresh_plot)
+        self.ymin.valueChanged.connect(self.refresh_plot)
+        self.ymax.valueChanged.connect(self.refresh_plot)
 
         axis_group_layout.addWidget(x_label, 0, 0)
-        axis_group_layout.addWidget(x_min, 1, 0)
+        axis_group_layout.addWidget(self.xmin, 1, 0)
         axis_group_layout.addWidget(x_between, 1, 1)
-        axis_group_layout.addWidget(x_max, 1, 2)
+        axis_group_layout.addWidget(self.xmax, 1, 2)
 
         axis_group_layout.addWidget(y_label, 2, 0)
-        axis_group_layout.addWidget(y_min, 3, 0)
+        axis_group_layout.addWidget(self.ymin, 3, 0)
         axis_group_layout.addWidget(y_between, 3, 1)
-        axis_group_layout.addWidget(y_max, 3, 2)
+        axis_group_layout.addWidget(self.ymax, 3, 2)
 
         axis_group_layout.setColumnStretch(0, 3)
         axis_group_layout.setColumnStretch(2, 3)
@@ -179,6 +186,10 @@ class SpectrumView(QDialog):
         self.simulated_color = QComboBox(line_group)
         self.simulated_color.addItems(self.USE_COLORS)
         self.simulated_color.setCurrentText("orange")
+
+        self.line_width.valueChanged.connect(self.refresh_plot)
+        self.undeformed_color.currentTextChanged.connect(self.refresh_plot)
+        self.simulated_color.currentTextChanged.connect(self.refresh_plot)
 
         line_group_layout.addWidget(line_width_label, 0, 0)
         line_group_layout.addWidget(self.line_width, 0, 1)
@@ -269,4 +280,16 @@ class SpectrumView(QDialog):
 
         self.ax.set_xlabel("{} [nm]".format(_("Wavelength")))
         self.ax.set_ylabel("{} [R]".format(_("Reflectivity")))
+        self.ax.set_xlim(xmin=self.xmin.value(), xmax=self.xmax.value())
+        self.ax.set_ylim(ymin=self.ymin.value(), ymax=self.ymax.value())
         self.canvas.draw()
+
+    def savePlotFigure(self):
+        to_file, filter = QFileDialog.getSaveFileName(
+            self,
+            caption=_("Save FBG Spectrum Plot"),
+            dir="./sample",
+            filter="{} (*.png)".format(_("Images"))
+        )
+        if to_file:
+            self.fig.savefig(to_file)
