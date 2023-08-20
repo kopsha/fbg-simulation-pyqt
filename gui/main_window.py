@@ -1,5 +1,8 @@
 from pathlib import Path
+from functools import partial
+from itertools import pairwise
 import locale
+from numpy import linspace
 from PySide6.QtWidgets import (
     QCheckBox,
     QFileDialog,
@@ -16,8 +19,9 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
     QMainWindow,
+    QInputDialog,
 )
-from PySide6.QtCore import Qt, Slot
+from PySide6.QtCore import Qt, Slot, QCoreApplication
 from PySide6.QtGui import QTextCursor, QDoubleValidator, QCloseEvent
 
 from osa.simulator import StrainTypes, StressTypes, SiUnits
@@ -299,10 +303,10 @@ class ParametersView(QWidget):
         row3, self.tolerance = self.make_float_parameter(_("Toleranta"), "mm", "0.01")
 
         positions_group, self.fbg_positions = self.make_float_list_parameter(
-            _("Pozitiile senzorilor FBG fata de start"), "[mm]"
+            _("Pozitiile senzorilor FBG fata de start"), "[mm]", _("position"),
         )
         wavelengths_group, self.original_wavelengths = self.make_float_list_parameter(
-            _("Lungimile de unda originale"), "[nm]"
+            _("Lungimile de unda originale"), "[nm]", _("wavelength"), with_auto=True
         )
 
         layout = QVBoxLayout()
@@ -316,21 +320,26 @@ class ParametersView(QWidget):
 
         return layout
 
-    def make_float_list_parameter(self, display_text: str, unit_text):
-        group = QGroupBox(f"{display_text}")
+    def make_float_list_parameter(self, display_text: str, unit_text: str, keyword: str, with_auto: bool = False):
+        group = QGroupBox(f"{display_text} {unit_text}")
 
-        values = QTextEdit(group)
-        unit_label = QLabel(
-            f"<small>{unit_text}</small>", group, alignment=Qt.AlignmentFlag.AlignCenter
-        )
-        add_button = QPushButton("✚", group)
-        clear_button = QPushButton("✗", group)
+        values = QTextEdit(group, readOnly=True)
+
+        add_button = QPushButton(_("Add"), group)
+        add_button.clicked.connect(partial(self.add_float_list, values, keyword))
+        clear_button = QPushButton(_("Remove"), group)
         clear_button.clicked.connect(values.clear)
 
         actions_layout = QVBoxLayout()
-        actions_layout.addWidget(unit_label)
         actions_layout.addWidget(add_button)
         actions_layout.addWidget(clear_button)
+
+        if with_auto:
+            auto_button = QPushButton(_("Auto"), group)
+            min_bandwidth = locale.atof(self.min_bandwidth.text()),
+            max_bandwidth = locale.atof(self.max_bandwidth.text()),
+            auto_button.clicked.connect(partial(self.fill_float_list, values, (min_bandwidth, max_bandwidth)))
+            actions_layout.insertWidget(0, auto_button)
 
         layout = QHBoxLayout()
         layout.addWidget(values)
@@ -338,6 +347,31 @@ class ParametersView(QWidget):
         group.setLayout(layout)
 
         return group, values
+
+    def add_float_list(self, target: QTextEdit, keyword: str):
+        values = list()
+
+        for i in range(self.fbg_count.value()):
+            value, ok = QInputDialog.getDouble(
+                self,
+                "",
+                "{} #{} {}".format(_("Please enter a value for FBG"), i+1, keyword),
+                flags=Qt.WindowType.Popup,
+            )
+            if ok:
+                values.append(value)
+            else:
+                return  # User has cancelled
+
+            QCoreApplication.processEvents()
+
+        values.sort()
+        target.setText("\n".join(map(locale.str, values)))
+
+    def fill_float_list(self, target: QTextEdit, range: tuple):
+        left, right = range
+        values = linspace(left, right, self.fbg_count.value() + 1, endpoint=False)
+        target.setText("\n".join(map(locale.str, values[1:])))
 
     def make_spectrum_section(self, section_id: int):
         title = QLabel(
@@ -439,32 +473,39 @@ class ParametersView(QWidget):
             raise ValueError("'{}' {}".format(datafile, _("is not a valid data file.")))
 
         if positions := self.fbg_positions.toPlainText():
-            fbg_positions = positions.split("\n")
+            fbg_positions = list(map(float, positions.split("\n")))
         else:
-            fbg_positions = [22, 50, 70]
+            fbg_positions = []
 
-        if len(fbg_positions) == params["fbg_count"]:
-            params["fbg_positions"] = list(map(float, fbg_positions))
-        else:
+        steps = [right - left for left, right in pairwise(fbg_positions)]
+        if len(fbg_positions) != params["fbg_count"]:
             raise ValueError(
                 "Sensors count ({}) and positions count ({}) should be equal.".format(
                     params["fbg_count"], len(fbg_positions)
                 )
             )
-
-        if wave_legths := self.original_wavelengths.toPlainText():
-            original_wavelengths = wave_legths.split("\n")
+        elif min(steps, default=params["fbg_length"]) < params["fbg_length"]:
+            raise ValueError(_("Two consecutive FBG positions cannot be shorter than FBG length."))
         else:
-            original_wavelengths = [1520.0, 1550.0, 1575.0]
+            params["fbg_positions"] = fbg_positions
 
-        if len(original_wavelengths) == params["fbg_count"]:
-            params["original_wavelengths"] = list(map(float, original_wavelengths))
+        if wavelengths := self.original_wavelengths.toPlainText():
+            original_wavelengths = list(map(float, wavelengths.split("\n")))
         else:
+            original_wavelengths = []
+
+        if min(original_wavelengths, default=params["min_bandwidth"]) < params["min_bandwidth"]:
+            raise ValueError(_("At least one wavelength is below the minimum bandwidth setting."))
+        elif max(original_wavelengths, default=params["max_bandwidth"]) > params["max_bandwidth"]:
+            raise ValueError(_("At least one wavelength is above the maximum bandwidth setting."))
+        elif len(original_wavelengths) != params["fbg_count"]:
             raise ValueError(
-                "Sensors count ({}) and original wavelengths count ({}) should be equal.".format(
+                _("Sensors count ({}) and original wavelengths count ({}) must be equal.").format(
                     params["fbg_count"], len(original_wavelengths)
                 )
             )
+        else:
+            params["original_wavelengths"] = original_wavelengths
 
         return params
 
