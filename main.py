@@ -11,7 +11,7 @@ from version import VERSION
 
 def main(argv):
     app = QApplication(argv)
-    translation.install("en")
+    translation.install("ro")
     setlocale(LC_ALL, "")
 
     window = MainWindow()
