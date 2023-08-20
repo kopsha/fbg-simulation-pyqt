@@ -86,11 +86,11 @@ class ParametersView(QWidget):
 
     def make_loader_section(self, section_id: int):
         title = QLabel(
-            "<b>({}) {}</b>".format(section_id, _("Incarca datele de tensiune si deformare"))
+            "<b>({}) {}</b>".format(section_id, _("Load strain and stress data from file"))
         )
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        load_button = QPushButton(_("Alege fisier"))
+        load_button = QPushButton(_("Choose file"))
         load_button.clicked.connect(self.load_file)
 
         self.filepath = QLineEdit(self)
@@ -512,7 +512,7 @@ class ParametersView(QWidget):
     @Slot()
     def run_simulation(self):
         if self.worker is not None:
-            self.print_error(_("A simulator session is already in progress."))
+            self.print_error(_("A simulator session is already running."))
             return
 
         self.simulation_data = None
