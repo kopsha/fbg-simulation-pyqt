@@ -27,7 +27,6 @@ class WorkerThread(QThread):
             undeformed_data = None
             if self.include_undeformed_signal:
                 undeformed_data = simu.undeformed_fbg()
-                print("undeformed reflected signal", undeformed_data["reflec"][:5])
                 self.progress.emit(34)
 
             self.progress.emit(55)
@@ -35,14 +34,12 @@ class WorkerThread(QThread):
                 strain_type=StrainTypes.NON_UNIFORM,
                 stress_type=StressTypes.INCLUDED,
             )
-            print("deformed reflected signal", deformed_data["reflec"][:5])
             self.progress.emit(89)
 
             summary_data = simu.compute_fbg_shifts_and_widths(
                 strain_type=StrainTypes.NON_UNIFORM,
                 stress_type=StressTypes.INCLUDED,
             )
-            print(f"{summary_data=}")
             self.progress.emit(100)
 
         except Exception as err:

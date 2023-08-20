@@ -1,4 +1,4 @@
-import numpy as np
+import locale
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
@@ -107,7 +107,7 @@ class SpectrumView(QDialog):
             minimum=1000,
             maximum=2000,
             singleStep=10,
-            value=1490,
+            value=1500,
             suffix=" nm",
             alignment=Qt.AlignmentFlag.AlignRight,
         )
@@ -116,7 +116,7 @@ class SpectrumView(QDialog):
             minimum=1000,
             maximum=2000,
             singleStep=10,
-            value=1610,
+            value=1600,
             suffix=" nm",
             alignment=Qt.AlignmentFlag.AlignRight,
         )
@@ -137,7 +137,7 @@ class SpectrumView(QDialog):
             minimum=-0.5,
             maximum=2.0,
             singleStep=0.1,
-            value=1.1,
+            value=1.2,
             suffix=" R",
             alignment=Qt.AlignmentFlag.AlignRight,
         )
@@ -225,9 +225,9 @@ class SpectrumView(QDialog):
     def read_data_rows(self, model):
         for i in range(self.data["params"]["fbg_count"]):
             key = f"FBG{i+1}"
-            wave_length = "{} nm".format(self.data["params"]["original_wavelengths"][i])
-            wave_shift = "{:.15f} nm".format(self.data["summary"][key]["wave_shift"])
-            wave_width = "{:.15f} nm".format(self.data["summary"][key]["wave_width"])
+            wave_length = locale.format_string("%.0f nm", self.data["params"]["original_wavelengths"][i])
+            wave_shift = locale.format_string("%.15f nm", self.data["summary"][key]["wave_shift"])
+            wave_width = locale.format_string("%.15f nm", self.data["summary"][key]["wave_width"])
             self.add_summary_row(model, [wave_length, wave_shift, wave_width])
 
     def add_summary_row(self, model, data):

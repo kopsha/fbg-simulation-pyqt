@@ -3,6 +3,7 @@ import sys
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QIcon
 
+from locale import getlocale, setlocale, LC_ALL
 import translation
 from gui.main_window import MainWindow
 from version import VERSION
@@ -10,8 +11,8 @@ from version import VERSION
 
 def main(argv):
     app = QApplication(argv)
-
     translation.install("ro")
+    setlocale(LC_ALL, "")
 
     window = MainWindow()
     window.setWindowTitle(f"Simulator FBG v{VERSION} (2023)")

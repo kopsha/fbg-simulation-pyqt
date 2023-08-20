@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional
+import locale
 from PySide6.QtWidgets import (
     QCheckBox,
     QFileDialog,
@@ -51,8 +51,6 @@ class ParametersView(QWidget):
 
         side_layout = self.make_side_layout()
         self.layout.addLayout(side_layout, 22)
-
-        self.println(_("Aplicatia a fost initializata cu succes."))
 
     def make_side_layout(self):
         layout = QVBoxLayout()
@@ -267,7 +265,7 @@ class ParametersView(QWidget):
         label = QLabel(display_text)
         unit_label = QLabel(unit_text)
         value = QLineEdit(
-            value_text,
+            locale.str(float(value_text)),
             alignment=Qt.AlignmentFlag.AlignRight,
             validator=self.float_validator,
         )
@@ -407,30 +405,30 @@ class ParametersView(QWidget):
             units=SiUnits(int(self.has_si_units.isChecked())),
             strain_type=self.strain_type,
             stress_type=self.stress_type,
-            emulate_temperature=float(self.emulate_temperature.text())
+            emulate_temperature=locale.atof(self.emulate_temperature.text())
             if self.has_emulate_temperature.isChecked()
             else None,
-            host_expansion_coefficient=float(
+            host_expansion_coefficient=locale.atof(
                 self.host_expansion_coefficient.text()
                 if self.has_host_expansion.isChecked()
                 else self.fiber_expansion_coefficient.text()
             ),
-            resolution=float(self.resolution.text()),
-            min_bandwidth=float(self.min_bandwidth.text()),
-            max_bandwidth=float(self.max_bandwidth.text()),
-            ambient_temperature=float(self.ambient_temperature.text()),
-            initial_refractive_index=float(self.initial_refractive_index.text()),
-            mean_change_refractive_index=float(self.mean_change_refractive_index.text()),
-            fringe_visibility=float(self.fringe_visibility.text()),
-            directional_refractive_p11=float(self.directional_refractive_p11.text()),
-            directional_refractive_p12=float(self.directional_refractive_p12.text()),
-            youngs_mod=float(self.youngs_mod.text()),
-            poissons_coefficient=float(self.poissons_coefficient.text()),
-            fiber_expansion_coefficient=float(self.fiber_expansion_coefficient.text()),
-            thermo_optic=float(self.thermo_optic.text()),
+            resolution=locale.atof(self.resolution.text()),
+            min_bandwidth=locale.atof(self.min_bandwidth.text()),
+            max_bandwidth=locale.atof(self.max_bandwidth.text()),
+            ambient_temperature=locale.atof(self.ambient_temperature.text()),
+            initial_refractive_index=locale.atof(self.initial_refractive_index.text()),
+            mean_change_refractive_index=locale.atof(self.mean_change_refractive_index.text()),
+            fringe_visibility=locale.atof(self.fringe_visibility.text()),
+            directional_refractive_p11=locale.atof(self.directional_refractive_p11.text()),
+            directional_refractive_p12=locale.atof(self.directional_refractive_p12.text()),
+            youngs_mod=locale.atof(self.youngs_mod.text()),
+            poissons_coefficient=locale.atof(self.poissons_coefficient.text()),
+            fiber_expansion_coefficient=locale.atof(self.fiber_expansion_coefficient.text()),
+            thermo_optic=locale.atof(self.thermo_optic.text()),
             fbg_count=int(self.fbg_count.text()),
-            fbg_length=float(self.fbg_length.text()),
-            tolerance=float(self.tolerance.text()),
+            fbg_length=locale.atof(self.fbg_length.text()),
+            tolerance=locale.atof(self.tolerance.text()),
             has_reflected_signal=self.has_reflected_signal.isChecked(),
         )
 
@@ -457,7 +455,7 @@ class ParametersView(QWidget):
         if wave_legths := self.original_wavelengths.toPlainText():
             original_wavelengths = wave_legths.split("\n")
         else:
-            original_wavelengths = [1500.0, 1525.0, 1550.0]
+            original_wavelengths = [1520.0, 1550.0, 1575.0]
 
         if len(original_wavelengths) == params["fbg_count"]:
             params["original_wavelengths"] = list(map(float, original_wavelengths))
