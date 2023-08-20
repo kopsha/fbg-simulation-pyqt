@@ -304,7 +304,7 @@ msgstr "Lungime de undă"
 
 #: gui/plot_window.py:170
 msgid "Width"
-msgstr "Lățime"
+msgstr "Grosime"
 
 #: gui/plot_window.py:213
 msgid "Width Variation"
