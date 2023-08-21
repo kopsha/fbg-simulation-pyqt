@@ -112,7 +112,7 @@ msgstr "Imagini"
 
 #: gui/main_window.py:147
 msgid "Include stress"
-msgstr "Include stresul"
+msgstr "Tensiune"
 
 #: gui/main_window.py:381
 msgid "Include the undeformed FBG reflected signal"
@@ -136,7 +136,7 @@ msgstr "Încarcă datele din"
 
 #: gui/main_window.py:89
 msgid "Load strain / stress data from file"
-msgstr "Încarcă datele de deformare / stres din fișier"
+msgstr "Încarcă datele de deformare / tensiune din fișier"
 
 #: gui/main_window.py:130
 msgid "Longitudinal strain"
@@ -160,7 +160,7 @@ msgstr "Neuniform"
 
 #: gui/main_window.py:133 gui/main_window.py:150
 msgid "None"
-msgstr "Niciunul"
+msgstr "Niciuna"
 
 #: gui/main_window.py:299
 msgid "Number of FBG sensors"
@@ -276,7 +276,7 @@ msgstr "Toleranță"
 
 #: gui/main_window.py:152
 msgid "Transverse stress"
-msgstr "Stres transversal"
+msgstr "Tensiune transversală"
 
 #: gui/main_window.py:487
 msgid "Two consecutive FBG positions cannot be shorter than FBG length."
