@@ -32,21 +32,36 @@ adapted.
 The python application is built with [PySide6](https://pypi.org/project/PySide6/)
 and uses [pytest](https://docs.pytest.org/) for all its unit tests.
 
-You can install all required packages with the followin command:
+
+### Installation
+
+Considering that you have Python already installed, you can install all required
+packages with just one command:
 
 ```bash
 pip install -r requirements.txt
 ```
 
+Then, you need to compile the translated messages by running the shell script
+```bash
+./compile-messages.sh
+```
 
-### Installation
-
-A big WIP!
+And you're good to go.
 
 ### Usage
 
 To start the application simply run the [main.py](./main.py) and load the
 provided [sample.txt](./sample/tut-export.txt) datafile.
+
+
+## Application design diagram
+
+The implementation of this application has completely decoupled GUI classes from
+the simulator. The simulation code is pure python code and can be further
+integrated in any kind of other applications (be it GUI or computing centric)
+
+![FBG Simulator diagram](./docs/app-diagram.png)
 
 
 ## Acknowledgments and Licensing
