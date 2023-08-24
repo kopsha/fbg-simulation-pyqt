@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fbg-simulation-pyqt v2.0\n"
 "Report-Msgid-Bugs-To: codrutatoadere@gmail.com\n"
-"POT-Creation-Date: 2023-08-24 07:01+0300\n"
+"POT-Creation-Date: 2023-08-24 07:25+0300\n"
 "PO-Revision-Date: 2023-08-20 18:28+0300\n"
 "Last-Translator: Codruta Toadere <codrutatoadere@gmail.com>\n"
 "Language-Team: Romanian <translation-team-ro@lists.sourceforge.net>\n"
@@ -15,8 +15,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
-"20)) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
 
 #: gui/main_window.py:514
 msgid "A simulator session is already running."
@@ -36,8 +35,7 @@ msgstr "Aplică conversia din m în mm"
 
 #: gui/main_window.py:499
 msgid "At least one wavelength is above the maximum bandwidth setting."
-msgstr ""
-"Cel puțin o lungime de undă este peste limita de lățime de bandă maximă."
+msgstr "Cel puțin o lungime de undă este peste limita de lățime de bandă maximă."
 
 #: gui/main_window.py:497
 msgid "At least one wavelength is below the minimum bandwidth setting."
@@ -51,7 +49,7 @@ msgstr "Auto"
 msgid "Average variation in refractive index"
 msgstr "Variația medie a indicelui de refracție"
 
-#: gui/plot_window.py:103
+#: gui/plot_window.py:105
 msgid "Axis control"
 msgstr "Controlul axelor"
 
@@ -67,7 +65,7 @@ msgstr "Alegeți fișierul"
 msgid "Clear log"
 msgstr "Șterge jurnalul"
 
-#: gui/plot_window.py:263
+#: gui/plot_window.py:266
 msgid "Deformed FBG Spectrum"
 msgstr "Spectrul FBG deformat"
 
@@ -83,9 +81,9 @@ msgstr "Emulează temperatura modelului"
 msgid "Emulation options"
 msgstr "Opțiuni de emulare"
 
-#: gui/plot_window.py:147
+#: gui/plot_window.py:155
 msgid "Enable panning"
-msgstr "Modul panoramare"
+msgstr "Activeaza panoramare"
 
 #: gui/main_window.py:211
 msgid "Fiber attributes (advanced mode)"
@@ -99,7 +97,7 @@ msgstr "Coeficientul de dilatare termică a fibrei"
 msgid "Fringe visibility"
 msgstr "Vizibilitatea franjelor"
 
-#: gui/plot_window.py:88
+#: gui/plot_window.py:90
 msgid "Grid"
 msgstr "Grilă"
 
@@ -111,7 +109,7 @@ msgstr "Coeficientul de dilatare termică a gazdei"
 msgid "If distances are not expressed in millimeters [mm]"
 msgstr "Dacă distanțele nu sunt exprimate în milimetri [mm]"
 
-#: gui/plot_window.py:302
+#: gui/plot_window.py:303
 msgid "Images"
 msgstr "Imagini"
 
@@ -127,11 +125,11 @@ msgstr "Include semnalul FBG reflectat nedeformat"
 msgid "Initial refractive index"
 msgstr "Indice de refracție inițial"
 
-#: gui/plot_window.py:87
+#: gui/plot_window.py:89
 msgid "Legend"
 msgstr "Legendă"
 
-#: gui/plot_window.py:174
+#: gui/plot_window.py:177
 msgid "Line properties"
 msgstr "Proprietăți linie"
 
@@ -183,11 +181,11 @@ msgstr "Lungimi de undă originale"
 msgid "Please enter a value for FBG"
 msgstr "Introduceți o valoare pentru FBG"
 
-#: gui/plot_window.py:34
+#: gui/plot_window.py:36
 msgid "Plot FBG Spectrum"
 msgstr "Trasează spectrul FBG"
 
-#: gui/plot_window.py:84
+#: gui/plot_window.py:86
 msgid "Plot options"
 msgstr "Opțiuni de trasare"
 
@@ -203,7 +201,7 @@ msgstr "Coeficientul lui Poisson"
 msgid "Positions of FBG sensors (distance from the start)"
 msgstr "Pozițiile senzorilor FBG (distanța de la început)"
 
-#: gui/plot_window.py:128 gui/plot_window.py:292
+#: gui/plot_window.py:130 gui/plot_window.py:286
 msgid "Reflectivity"
 msgstr "Reflectivitate"
 
@@ -211,11 +209,11 @@ msgstr "Reflectivitate"
 msgid "Remove"
 msgstr "Elimină"
 
-#: gui/plot_window.py:300
+#: gui/plot_window.py:301
 msgid "Save FBG Spectrum Plot"
 msgstr "Salvează graficul spectrului FBG"
 
-#: gui/plot_window.py:70
+#: gui/plot_window.py:72
 msgid "Save picture"
 msgstr "Salvează imaginea"
 
@@ -225,15 +223,13 @@ msgstr "Lungimea senzorului"
 
 #: gui/main_window.py:502
 msgid "Sensors count ({}) and original wavelengths count ({}) must be equal."
-msgstr ""
-"Numărul de senzori ({}) și numărul de lungimi de undă originale ({}) trebuie "
-"să fie egale."
+msgstr "Numărul de senzori ({}) și numărul de lungimi de undă originale ({}) trebuie să fie egale."
 
-#: gui/plot_window.py:220
+#: gui/plot_window.py:223
 msgid "Shift"
 msgstr "Deplasare"
 
-#: gui/plot_window.py:192
+#: gui/plot_window.py:195
 msgid "Simulated color"
 msgstr "Culoare spectru simulat"
 
@@ -245,7 +241,7 @@ msgstr "Simularea s-a încheiat cu succes."
 msgid "Simulation has failed, reason: {}"
 msgstr "Simularea a eșuat, motiv: {}"
 
-#: gui/plot_window.py:212
+#: gui/plot_window.py:215
 msgid "Simulation output"
 msgstr "Rezultat simulare"
 
@@ -261,7 +257,7 @@ msgstr "Rezoluție simulare"
 msgid "Spectrum simulation"
 msgstr "Simulare spectru"
 
-#: gui/plot_window.py:89
+#: gui/plot_window.py:91
 msgid "Split waveform (Birefringence)"
 msgstr "Separă forma de undă (Birefringență)"
 
@@ -289,11 +285,11 @@ msgstr "Tensiune transversală"
 msgid "Two consecutive FBG positions cannot be shorter than FBG length."
 msgstr "Două poziții consecutive FBG nu pot fi mai scurte decât lungimea FBG."
 
-#: gui/plot_window.py:255
+#: gui/plot_window.py:258
 msgid "Undeformed FBG Spectrum"
 msgstr "Spectru FBG nedeformat"
 
-#: gui/plot_window.py:187
+#: gui/plot_window.py:190
 msgid "Undeformed color"
 msgstr "Culoare spectru nedeformat"
 
@@ -305,19 +301,19 @@ msgstr "Uniform"
 msgid "Virtual Fiber Bragg Grating array configuration"
 msgstr "Configurație virtuală a rețelei Fiber Bragg Grating"
 
-#: gui/plot_window.py:107 gui/plot_window.py:220 gui/plot_window.py:291
+#: gui/plot_window.py:109 gui/plot_window.py:223 gui/plot_window.py:285
 msgid "Wavelength"
 msgstr "Lungime de undă"
 
-#: gui/plot_window.py:177
+#: gui/plot_window.py:180
 msgid "Width"
 msgstr "Grosime"
 
-#: gui/plot_window.py:220
+#: gui/plot_window.py:223
 msgid "Width Variation"
 msgstr "Variație de lățime"
 
-#: gui/plot_window.py:272
+#: gui/plot_window.py:275
 msgid "Y-Wave Contribution"
 msgstr "Contribuție Y-Wave"
 
@@ -325,7 +321,7 @@ msgstr "Contribuție Y-Wave"
 msgid "Young's module"
 msgstr "Modul lui Young"
 
-#: gui/plot_window.py:279
+#: gui/plot_window.py:282
 msgid "Z-Wave Contribution"
 msgstr "Contribuție Z-Wave"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fbg-simulation-pyqt v2.0\n"
 "Report-Msgid-Bugs-To: codrutatoadere@gmail.com\n"
-"POT-Creation-Date: 2023-08-24 07:01+0300\n"
+"POT-Creation-Date: 2023-08-24 07:25+0300\n"
 "PO-Revision-Date: 2023-08-20 18:28+0300\n"
 "Last-Translator: Codruta Toadere <codrutatoadere@gmail.com>\n"
 "Language-Team: English\n"
@@ -49,7 +49,7 @@ msgstr "Auto"
 msgid "Average variation in refractive index"
 msgstr "Average variation in refractive index"
 
-#: gui/plot_window.py:103
+#: gui/plot_window.py:105
 msgid "Axis control"
 msgstr "Axis control"
 
@@ -65,7 +65,7 @@ msgstr "Choose file"
 msgid "Clear log"
 msgstr "Clear log"
 
-#: gui/plot_window.py:263
+#: gui/plot_window.py:266
 msgid "Deformed FBG Spectrum"
 msgstr "Deformed FBG Spectrum"
 
@@ -81,7 +81,7 @@ msgstr "Emulate model temperature"
 msgid "Emulation options"
 msgstr "Emulation options"
 
-#: gui/plot_window.py:147
+#: gui/plot_window.py:155
 msgid "Enable panning"
 msgstr "Enable panning"
 
@@ -97,7 +97,7 @@ msgstr "Fiber thermal expansion coefficient"
 msgid "Fringe visibility"
 msgstr "Fringe visibility"
 
-#: gui/plot_window.py:88
+#: gui/plot_window.py:90
 msgid "Grid"
 msgstr "Grid"
 
@@ -109,7 +109,7 @@ msgstr "Host thermal expansion coefficient"
 msgid "If distances are not expressed in millimeters [mm]"
 msgstr "If distances are not expressed in millimeters [mm]"
 
-#: gui/plot_window.py:302
+#: gui/plot_window.py:303
 msgid "Images"
 msgstr "Images"
 
@@ -125,11 +125,11 @@ msgstr "Include the undeformed FBG reflected signal"
 msgid "Initial refractive index"
 msgstr "Initial refractive index"
 
-#: gui/plot_window.py:87
+#: gui/plot_window.py:89
 msgid "Legend"
 msgstr "Legend"
 
-#: gui/plot_window.py:174
+#: gui/plot_window.py:177
 msgid "Line properties"
 msgstr "Line properties"
 
@@ -181,11 +181,11 @@ msgstr "Original wavelengths"
 msgid "Please enter a value for FBG"
 msgstr "Please enter a value for FBG"
 
-#: gui/plot_window.py:34
+#: gui/plot_window.py:36
 msgid "Plot FBG Spectrum"
 msgstr "Plot FBG Spectrum"
 
-#: gui/plot_window.py:84
+#: gui/plot_window.py:86
 msgid "Plot options"
 msgstr "Plot options"
 
@@ -201,7 +201,7 @@ msgstr "Poisson's coefficient"
 msgid "Positions of FBG sensors (distance from the start)"
 msgstr "Positions of FBG sensors (distance from the start)"
 
-#: gui/plot_window.py:128 gui/plot_window.py:292
+#: gui/plot_window.py:130 gui/plot_window.py:286
 msgid "Reflectivity"
 msgstr "Reflectivity"
 
@@ -209,11 +209,11 @@ msgstr "Reflectivity"
 msgid "Remove"
 msgstr "Remove"
 
-#: gui/plot_window.py:300
+#: gui/plot_window.py:301
 msgid "Save FBG Spectrum Plot"
 msgstr "Save FBG Spectrum Plot"
 
-#: gui/plot_window.py:70
+#: gui/plot_window.py:72
 msgid "Save picture"
 msgstr "Save picture"
 
@@ -225,11 +225,11 @@ msgstr "Sensor length"
 msgid "Sensors count ({}) and original wavelengths count ({}) must be equal."
 msgstr "Sensors count ({}) and original wavelengths count ({}) must be equal."
 
-#: gui/plot_window.py:220
+#: gui/plot_window.py:223
 msgid "Shift"
 msgstr "Shift"
 
-#: gui/plot_window.py:192
+#: gui/plot_window.py:195
 msgid "Simulated color"
 msgstr "Simulated color"
 
@@ -241,7 +241,7 @@ msgstr "Simulation completed successfully."
 msgid "Simulation has failed, reason: {}"
 msgstr "Simulation has failed, reason: {}"
 
-#: gui/plot_window.py:212
+#: gui/plot_window.py:215
 msgid "Simulation output"
 msgstr "Simulation output"
 
@@ -257,7 +257,7 @@ msgstr "Simulation resolution"
 msgid "Spectrum simulation"
 msgstr "Spectrum simulation"
 
-#: gui/plot_window.py:89
+#: gui/plot_window.py:91
 msgid "Split waveform (Birefringence)"
 msgstr "Split waveform (Birefringence)"
 
@@ -285,11 +285,11 @@ msgstr "Transverse stress"
 msgid "Two consecutive FBG positions cannot be shorter than FBG length."
 msgstr "Two consecutive FBG positions cannot be shorter than FBG length."
 
-#: gui/plot_window.py:255
+#: gui/plot_window.py:258
 msgid "Undeformed FBG Spectrum"
 msgstr "Undeformed FBG Spectrum"
 
-#: gui/plot_window.py:187
+#: gui/plot_window.py:190
 msgid "Undeformed color"
 msgstr "Undeformed color"
 
@@ -301,19 +301,19 @@ msgstr "Uniform"
 msgid "Virtual Fiber Bragg Grating array configuration"
 msgstr "Virtual Fiber Bragg Grating array configuration"
 
-#: gui/plot_window.py:107 gui/plot_window.py:220 gui/plot_window.py:291
+#: gui/plot_window.py:109 gui/plot_window.py:223 gui/plot_window.py:285
 msgid "Wavelength"
 msgstr "Wavelength"
 
-#: gui/plot_window.py:177
+#: gui/plot_window.py:180
 msgid "Width"
 msgstr "Width"
 
-#: gui/plot_window.py:220
+#: gui/plot_window.py:223
 msgid "Width Variation"
 msgstr "Width Variation"
 
-#: gui/plot_window.py:272
+#: gui/plot_window.py:275
 msgid "Y-Wave Contribution"
 msgstr "Y-Wave Contribution"
 
@@ -321,7 +321,7 @@ msgstr "Y-Wave Contribution"
 msgid "Young's module"
 msgstr "Young's module"
 
-#: gui/plot_window.py:279
+#: gui/plot_window.py:282
 msgid "Z-Wave Contribution"
 msgstr "Z-Wave Contribution"
 
