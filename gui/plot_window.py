@@ -22,6 +22,7 @@ from PySide6.QtGui import QStandardItem, QStandardItemModel
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import (
     FigureCanvasQTAgg as FigureCanvas,
+    NavigationToolbar2QT as NavigationToolbar,
 )
 
 
@@ -53,6 +54,8 @@ class SpectrumView(QDialog):
 
         self.fig, self.ax = plt.subplots()
         self.canvas = FigureCanvas(self.fig)
+        self.toolbar = NavigationToolbar(self.canvas, self)
+        self.toolbar.hide()
 
         layout.addWidget(self.canvas)
         return layout
@@ -141,11 +144,13 @@ class SpectrumView(QDialog):
             suffix=" R",
             alignment=Qt.AlignmentFlag.AlignRight,
         )
+        self.enable_panning = QCheckBox(_("Enable panning"), axis_group, checked=False)
 
         self.xmin.valueChanged.connect(self.refresh_plot)
         self.xmax.valueChanged.connect(self.refresh_plot)
         self.ymin.valueChanged.connect(self.refresh_plot)
         self.ymax.valueChanged.connect(self.refresh_plot)
+        self.enable_panning.clicked.connect(self.refresh_plot)
 
         axis_group_layout.addWidget(x_label, 0, 0)
         axis_group_layout.addWidget(self.xmin, 1, 0)
@@ -156,6 +161,8 @@ class SpectrumView(QDialog):
         axis_group_layout.addWidget(self.ymin, 3, 0)
         axis_group_layout.addWidget(y_between, 3, 1)
         axis_group_layout.addWidget(self.ymax, 3, 2)
+
+        axis_group_layout.addWidget(self.enable_panning, 4, 0, 1, 3)
 
         axis_group_layout.setColumnStretch(0, 3)
         axis_group_layout.setColumnStretch(2, 3)
@@ -277,6 +284,9 @@ class SpectrumView(QDialog):
 
         if self.grid.isChecked():
             self.ax.grid()
+
+        if self.enable_panning.isChecked():
+            self.toolbar.pan()
 
         self.ax.set_xlabel("{} [nm]".format(_("Wavelength")))
         self.ax.set_ylabel("{} [R]".format(_("Reflectivity")))

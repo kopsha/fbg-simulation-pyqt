@@ -52,7 +52,7 @@ msgstr "Variația medie a indicelui de refracție"
 
 #: gui/plot_window.py:100
 msgid "Axis control"
-msgstr "Controlul axei"
+msgstr "Controlul axelor"
 
 #: gui/main_window.py:127
 msgid "Choose a simulation type"
@@ -68,7 +68,7 @@ msgstr "Șterge jurnalul"
 
 #: gui/plot_window.py:256
 msgid "Deformed FBG Spectrum"
-msgstr "Spectrul FBG deform"
+msgstr "Spectrul FBG deformat"
 
 #: gui/main_window.py:432
 msgid "ERROR"
