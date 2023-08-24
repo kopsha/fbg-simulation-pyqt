@@ -19,11 +19,17 @@ compile()
     echo "..: Building ${use_locale} translation binaries"
 
     lang=${use_locale:0:2}
-    msgmerge messages.pot \
+    if [ ! -f "messages-${lang}.po" ]; then
+        init $use_locale
+    fi
+
+    msgmerge "messages-${lang}.po" messages.pot \
         --lang=${use_locale} \
         --sort-output \
+        --no-wrap \
         --verbose \
-        --update "messages-${lang}.po"
+        --update
+
     mkdir -p "./${lang}/LC_MESSAGES"
     msgfmt "messages-${lang}.po" \
         --verbose \
@@ -38,6 +44,7 @@ xgettext gui/*.py \
     --package-name="fbg-simulation-pyqt" \
     --package-version="v2.0" \
     --msgid-bugs-address="${EMAIL}" \
+    --language=Python \
     --verbose \
     --output="./translation/messages.pot"
 

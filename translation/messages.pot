@@ -8,13 +8,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fbg-simulation-pyqt v2.0\n"
 "Report-Msgid-Bugs-To: codrutatoadere@gmail.com\n"
-"POT-Creation-Date: 2023-08-20 18:28+0300\n"
+"POT-Creation-Date: 2023-08-24 07:07+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: en_US\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: gui/main_window.py:514
@@ -49,7 +49,7 @@ msgstr ""
 msgid "Average variation in refractive index"
 msgstr ""
 
-#: gui/plot_window.py:100
+#: gui/plot_window.py:103
 msgid "Axis control"
 msgstr ""
 
@@ -65,7 +65,7 @@ msgstr ""
 msgid "Clear log"
 msgstr ""
 
-#: gui/plot_window.py:256
+#: gui/plot_window.py:263
 msgid "Deformed FBG Spectrum"
 msgstr ""
 
@@ -81,6 +81,10 @@ msgstr ""
 msgid "Emulation options"
 msgstr ""
 
+#: gui/plot_window.py:147
+msgid "Enable panning"
+msgstr ""
+
 #: gui/main_window.py:211
 msgid "Fiber attributes (advanced mode)"
 msgstr ""
@@ -93,7 +97,7 @@ msgstr ""
 msgid "Fringe visibility"
 msgstr ""
 
-#: gui/plot_window.py:85
+#: gui/plot_window.py:88
 msgid "Grid"
 msgstr ""
 
@@ -105,7 +109,7 @@ msgstr ""
 msgid "If distances are not expressed in millimeters [mm]"
 msgstr ""
 
-#: gui/plot_window.py:292
+#: gui/plot_window.py:302
 msgid "Images"
 msgstr ""
 
@@ -121,11 +125,11 @@ msgstr ""
 msgid "Initial refractive index"
 msgstr ""
 
-#: gui/plot_window.py:84
+#: gui/plot_window.py:87
 msgid "Legend"
 msgstr ""
 
-#: gui/plot_window.py:167
+#: gui/plot_window.py:174
 msgid "Line properties"
 msgstr ""
 
@@ -177,11 +181,11 @@ msgstr ""
 msgid "Please enter a value for FBG"
 msgstr ""
 
-#: gui/plot_window.py:33
+#: gui/plot_window.py:34
 msgid "Plot FBG Spectrum"
 msgstr ""
 
-#: gui/plot_window.py:81
+#: gui/plot_window.py:84
 msgid "Plot options"
 msgstr ""
 
@@ -197,7 +201,7 @@ msgstr ""
 msgid "Positions of FBG sensors (distance from the start)"
 msgstr ""
 
-#: gui/plot_window.py:125 gui/plot_window.py:282
+#: gui/plot_window.py:128 gui/plot_window.py:292
 msgid "Reflectivity"
 msgstr ""
 
@@ -205,11 +209,11 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: gui/plot_window.py:290
+#: gui/plot_window.py:300
 msgid "Save FBG Spectrum Plot"
 msgstr ""
 
-#: gui/plot_window.py:67
+#: gui/plot_window.py:70
 msgid "Save picture"
 msgstr ""
 
@@ -221,11 +225,11 @@ msgstr ""
 msgid "Sensors count ({}) and original wavelengths count ({}) must be equal."
 msgstr ""
 
-#: gui/plot_window.py:213
+#: gui/plot_window.py:220
 msgid "Shift"
 msgstr ""
 
-#: gui/plot_window.py:185
+#: gui/plot_window.py:192
 msgid "Simulated color"
 msgstr ""
 
@@ -237,7 +241,7 @@ msgstr ""
 msgid "Simulation has failed, reason: {}"
 msgstr ""
 
-#: gui/plot_window.py:205
+#: gui/plot_window.py:212
 msgid "Simulation output"
 msgstr ""
 
@@ -253,7 +257,7 @@ msgstr ""
 msgid "Spectrum simulation"
 msgstr ""
 
-#: gui/plot_window.py:86
+#: gui/plot_window.py:89
 msgid "Split waveform (Birefringence)"
 msgstr ""
 
@@ -281,11 +285,11 @@ msgstr ""
 msgid "Two consecutive FBG positions cannot be shorter than FBG length."
 msgstr ""
 
-#: gui/plot_window.py:248
+#: gui/plot_window.py:255
 msgid "Undeformed FBG Spectrum"
 msgstr ""
 
-#: gui/plot_window.py:180
+#: gui/plot_window.py:187
 msgid "Undeformed color"
 msgstr ""
 
@@ -297,19 +301,19 @@ msgstr ""
 msgid "Virtual Fiber Bragg Grating array configuration"
 msgstr ""
 
-#: gui/plot_window.py:104 gui/plot_window.py:213 gui/plot_window.py:281
+#: gui/plot_window.py:107 gui/plot_window.py:220 gui/plot_window.py:291
 msgid "Wavelength"
 msgstr ""
 
-#: gui/plot_window.py:170
+#: gui/plot_window.py:177
 msgid "Width"
 msgstr ""
 
-#: gui/plot_window.py:213
+#: gui/plot_window.py:220
 msgid "Width Variation"
 msgstr ""
 
-#: gui/plot_window.py:265
+#: gui/plot_window.py:272
 msgid "Y-Wave Contribution"
 msgstr ""
 
@@ -317,7 +321,7 @@ msgstr ""
 msgid "Young's module"
 msgstr ""
 
-#: gui/plot_window.py:272
+#: gui/plot_window.py:279
 msgid "Z-Wave Contribution"
 msgstr ""
 
