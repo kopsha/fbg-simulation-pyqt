@@ -271,15 +271,15 @@ class SpectrumView(QDialog):
 
         if self.split.isChecked():
             self.ax.plot(
-                self.data["deformed"]["Y_split"]["wavelength"],
-                self.data["deformed"]["Y_split"]["reflec"],
+                self.data["deformed"]["wavelength"],
+                self.data["deformed"]["Y_split"],
                 color="red",
                 linewidth=self.line_width.value(),
                 label=_("Y-Wave Contribution"),
             )
             self.ax.plot(
-                self.data["deformed"]["Z_split"]["wavelength"],
-                self.data["deformed"]["Z_split"]["reflec"],
+                self.data["deformed"]["wavelength"],
+                self.data["deformed"]["Z_split"],
                 color="green",
                 linewidth=self.line_width.value(),
                 label=_("Z-Wave Contribution"),
