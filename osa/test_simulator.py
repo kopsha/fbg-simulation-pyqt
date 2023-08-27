@@ -138,6 +138,8 @@ def test_deformed_fbg(init_params):
         StressType=StressTypes.INCLUDED,
     )
     ref_data = ref_sim.DReflect
+    ref_Y_data = ref_sim.YReflect
+    ref_Z_data = ref_sim.ZReflect
 
     ## Prepare simulation to be tested
     simu = OsaSimulator(**init_params)
@@ -149,6 +151,9 @@ def test_deformed_fbg(init_params):
 
     assert data["wavelength"] == ref_data["wavelength"]
     assert np.array_equal(data["reflec"], ref_data["reflec"])
+
+    assert np.array_equal(data["Y_split"], ref_Y_data["reflec"])
+    assert np.array_equal(data["Z_split"], ref_Z_data["reflec"])
 
 
 def test_output_sum(init_params):
