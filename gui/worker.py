@@ -31,14 +31,14 @@ class WorkerThread(QThread):
 
             self.progress.emit(55)
             deformed_data = simu.deformed_fbg(
-                strain_type=StrainTypes.NON_UNIFORM,
-                stress_type=StressTypes.INCLUDED,
+                strain_type=self.strain_type,
+                stress_type=self.stress_type,
             )
             self.progress.emit(89)
 
             summary_data = simu.compute_fbg_shifts_and_widths(
-                strain_type=StrainTypes.NON_UNIFORM,
-                stress_type=StressTypes.INCLUDED,
+                strain_type=self.strain_type,
+                stress_type=self.stress_type,
             )
             self.progress.emit(100)
 
