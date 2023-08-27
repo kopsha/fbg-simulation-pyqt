@@ -73,10 +73,10 @@ class ParametersView(QWidget):
         section_1 = self.make_loader_section(1)
         grid.addLayout(section_1, 1, 1)
 
-        section_2 = self.make_deform_types_section(2)
+        section_2 = self.make_deform_types_section(3)
         grid.addLayout(section_2, 1, 2)
 
-        section_3 = self.make_parameters_section(3)
+        section_3 = self.make_parameters_section(2)
         grid.addLayout(section_3, 2, 1)
 
         section_4 = self.make_virtual_configuration_section(4)
@@ -86,7 +86,9 @@ class ParametersView(QWidget):
 
     def make_loader_section(self, section_id: int):
         title = QLabel(
-            "<b>({}) {}</b>".format(section_id, _("Load strain / stress data from file"))
+            "<b>({}) {}</b>".format(
+                section_id, _("Load strain / stress data from file")
+            )
         )
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -100,8 +102,12 @@ class ParametersView(QWidget):
         row.addWidget(self.filepath)
         row.addWidget(load_button)
 
-        si_units_group = QGroupBox(_("If distances are not expressed in millimeters [mm]"))
-        self.has_si_units = QCheckBox(_("Apply conversion from m to mm"), si_units_group)
+        si_units_group = QGroupBox(
+            _("If distances are not expressed in millimeters [mm]")
+        )
+        self.has_si_units = QCheckBox(
+            _("Apply conversion from m to mm"), si_units_group
+        )
         group_layout = QVBoxLayout()
         group_layout.addWidget(self.has_si_units)
         si_units_group.setLayout(group_layout)
@@ -124,7 +130,9 @@ class ParametersView(QWidget):
         self.strain_type = StrainTypes.NONE
         self.stress_type = StressTypes.NONE
 
-        title = QLabel("<b>({}) {}</b>".format(section_id, _("Choose a simulation type")))
+        title = QLabel(
+            "<b>({}) {}</b>".format(section_id, _("Choose a simulation type"))
+        )
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         strain_type_group = QGroupBox(_("Longitudinal strain"))
@@ -137,7 +145,9 @@ class ParametersView(QWidget):
 
         no_strain.clicked.connect(lambda: set_strain_type(StrainTypes.NONE))
         uniform_strain.clicked.connect(lambda: set_strain_type(StrainTypes.UNIFORM))
-        non_uniform_strain.clicked.connect(lambda: set_strain_type(StrainTypes.NON_UNIFORM))
+        non_uniform_strain.clicked.connect(
+            lambda: set_strain_type(StrainTypes.NON_UNIFORM)
+        )
 
         strain_group_layout.addWidget(no_strain)
         strain_group_layout.addWidget(uniform_strain)
@@ -165,7 +175,9 @@ class ParametersView(QWidget):
         )
         self.has_emulate_temperature = QCheckBox(emulation_group)
         self.emulate_temperature.setEnabled(False)
-        self.has_emulate_temperature.toggled.connect(self.emulate_temperature.setEnabled)
+        self.has_emulate_temperature.toggled.connect(
+            self.emulate_temperature.setEnabled
+        )
         row1.insertWidget(0, self.has_emulate_temperature)
 
         row2, self.host_expansion_coefficient = self.make_float_parameter(
@@ -173,7 +185,9 @@ class ParametersView(QWidget):
         )
         self.has_host_expansion = QCheckBox(emulation_group)
         self.host_expansion_coefficient.setEnabled(False)
-        self.has_host_expansion.toggled.connect(self.host_expansion_coefficient.setEnabled)
+        self.has_host_expansion.toggled.connect(
+            self.host_expansion_coefficient.setEnabled
+        )
         row2.insertWidget(0, self.has_host_expansion)
 
         emulation_group_layout = QVBoxLayout()
@@ -196,7 +210,9 @@ class ParametersView(QWidget):
             alignment=Qt.AlignmentFlag.AlignCenter,
         )
 
-        row1, self.resolution = self.make_float_parameter(_("Simulation resolution"), "[nm]", "0.05")
+        row1, self.resolution = self.make_float_parameter(
+            _("Simulation resolution"), "[nm]", "0.05"
+        )
         row2, self.min_bandwidth = self.make_float_parameter(
             _("Minimum bandwidth"), "[nm]", "1500.00"
         )
@@ -292,16 +308,24 @@ class ParametersView(QWidget):
 
     def make_virtual_configuration_section(self, section_id: int):
         title = QLabel(
-            "<b>({}) {}</b>".format(section_id, _("Virtual Fiber Bragg Grating array configuration")),
+            "<b>({}) {}</b>".format(
+                section_id, _("Virtual Fiber Bragg Grating array configuration")
+            ),
             alignment=Qt.AlignmentFlag.AlignCenter,
         )
 
-        row1, self.fbg_count = self.make_int_parameter(_("Number of FBG sensors"), "", "1")
-        row2, self.fbg_length = self.make_float_parameter(_("Sensor length"), "mm", "10.0")
+        row1, self.fbg_count = self.make_int_parameter(
+            _("Number of FBG sensors"), "", "1"
+        )
+        row2, self.fbg_length = self.make_float_parameter(
+            _("Sensor length"), "mm", "10.0"
+        )
         row3, self.tolerance = self.make_float_parameter(_("Tolerance"), "mm", "0.01")
 
         positions_group, self.fbg_positions = self.make_float_list_parameter(
-            _("Positions of FBG sensors (distance from the start)"), "[mm]", _("position"),
+            _("Positions of FBG sensors (distance from the start)"),
+            "[mm]",
+            _("position"),
         )
         wavelengths_group, self.original_wavelengths = self.make_float_list_parameter(
             _("Original wavelengths"), "[nm]", _("wavelength"), with_auto=True
@@ -318,7 +342,9 @@ class ParametersView(QWidget):
 
         return layout
 
-    def make_float_list_parameter(self, display_text: str, unit_text: str, keyword: str, with_auto: bool = False):
+    def make_float_list_parameter(
+        self, display_text: str, unit_text: str, keyword: str, with_auto: bool = False
+    ):
         group = QGroupBox(f"{display_text} {unit_text}")
 
         values = QTextEdit(group, readOnly=True)
@@ -334,9 +360,11 @@ class ParametersView(QWidget):
 
         if with_auto:
             auto_button = QPushButton(_("Auto"), group)
-            min_bandwidth = locale.atof(self.min_bandwidth.text()),
-            max_bandwidth = locale.atof(self.max_bandwidth.text()),
-            auto_button.clicked.connect(partial(self.fill_float_list, values, (min_bandwidth, max_bandwidth)))
+            min_bandwidth = (locale.atof(self.min_bandwidth.text()),)
+            max_bandwidth = (locale.atof(self.max_bandwidth.text()),)
+            auto_button.clicked.connect(
+                partial(self.fill_float_list, values, (min_bandwidth, max_bandwidth))
+            )
             actions_layout.insertWidget(0, auto_button)
 
         layout = QHBoxLayout()
@@ -353,7 +381,7 @@ class ParametersView(QWidget):
             value, ok = QInputDialog.getDouble(
                 self,
                 "",
-                "{} #{} {}".format(_("Please enter a value for FBG"), i+1, keyword),
+                "{} #{} {}".format(_("Please enter a value for FBG"), i + 1, keyword),
                 flags=Qt.WindowType.Popup,
             )
             if ok:
@@ -378,7 +406,9 @@ class ParametersView(QWidget):
         )
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.has_reflected_signal = QCheckBox(_("Include the undeformed FBG reflected signal"), checked=True)
+        self.has_reflected_signal = QCheckBox(
+            _("Include the undeformed FBG reflected signal"), checked=True
+        )
         simulate_button = QPushButton(_("Start simulation"))
         simulate_button.clicked.connect(self.run_simulation)
         self.progress = QProgressBar(value=0)
@@ -451,13 +481,21 @@ class ParametersView(QWidget):
             max_bandwidth=locale.atof(self.max_bandwidth.text()),
             ambient_temperature=locale.atof(self.ambient_temperature.text()),
             initial_refractive_index=locale.atof(self.initial_refractive_index.text()),
-            mean_change_refractive_index=locale.atof(self.mean_change_refractive_index.text()),
+            mean_change_refractive_index=locale.atof(
+                self.mean_change_refractive_index.text()
+            ),
             fringe_visibility=locale.atof(self.fringe_visibility.text()),
-            directional_refractive_p11=locale.atof(self.directional_refractive_p11.text()),
-            directional_refractive_p12=locale.atof(self.directional_refractive_p12.text()),
+            directional_refractive_p11=locale.atof(
+                self.directional_refractive_p11.text()
+            ),
+            directional_refractive_p12=locale.atof(
+                self.directional_refractive_p12.text()
+            ),
             youngs_mod=locale.atof(self.youngs_mod.text()),
             poissons_coefficient=locale.atof(self.poissons_coefficient.text()),
-            fiber_expansion_coefficient=locale.atof(self.fiber_expansion_coefficient.text()),
+            fiber_expansion_coefficient=locale.atof(
+                self.fiber_expansion_coefficient.text()
+            ),
             thermo_optic=locale.atof(self.thermo_optic.text()),
             fbg_count=int(self.fbg_count.text()),
             fbg_length=locale.atof(self.fbg_length.text()),
@@ -484,7 +522,9 @@ class ParametersView(QWidget):
                 )
             )
         elif min(steps, default=params["fbg_length"]) < params["fbg_length"]:
-            raise ValueError(_("Two consecutive FBG positions cannot be shorter than FBG length."))
+            raise ValueError(
+                _("Two consecutive FBG positions cannot be shorter than FBG length.")
+            )
         else:
             params["fbg_positions"] = fbg_positions
 
@@ -493,15 +533,25 @@ class ParametersView(QWidget):
         else:
             original_wavelengths = []
 
-        if min(original_wavelengths, default=params["min_bandwidth"]) < params["min_bandwidth"]:
-            raise ValueError(_("At least one wavelength is below the minimum bandwidth setting."))
-        elif max(original_wavelengths, default=params["max_bandwidth"]) > params["max_bandwidth"]:
-            raise ValueError(_("At least one wavelength is above the maximum bandwidth setting."))
+        if (
+            min(original_wavelengths, default=params["min_bandwidth"])
+            < params["min_bandwidth"]
+        ):
+            raise ValueError(
+                _("At least one wavelength is below the minimum bandwidth setting.")
+            )
+        elif (
+            max(original_wavelengths, default=params["max_bandwidth"])
+            > params["max_bandwidth"]
+        ):
+            raise ValueError(
+                _("At least one wavelength is above the maximum bandwidth setting.")
+            )
         elif len(original_wavelengths) != params["fbg_count"]:
             raise ValueError(
-                _("Sensors count ({}) and original wavelengths count ({}) must be equal.").format(
-                    params["fbg_count"], len(original_wavelengths)
-                )
+                _(
+                    "Sensors count ({}) and original wavelengths count ({}) must be equal."
+                ).format(params["fbg_count"], len(original_wavelengths))
             )
         else:
             params["original_wavelengths"] = original_wavelengths
@@ -531,7 +581,9 @@ class ParametersView(QWidget):
 
     def worker_finished(self):
         if self.worker.error_message:
-            message = _("Simulation has failed, reason: {}").format(self.worker.error_message)
+            message = _("Simulation has failed, reason: {}").format(
+                self.worker.error_message
+            )
             self.print_error(message)
         else:
             self.simulation_data = self.worker.data
@@ -541,7 +593,9 @@ class ParametersView(QWidget):
 
     def showPlot(self):
         if self.simulation_data is None:
-            self.print_error(_("There is no data to show, please run the simulation first."))
+            self.print_error(
+                _("There is no data to show, please run the simulation first.")
+            )
             return
 
         plot = SpectrumView(self, data=self.simulation_data)
