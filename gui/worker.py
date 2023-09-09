@@ -1,5 +1,5 @@
 from PySide6.QtCore import QThread, Signal
-from osa.simulator import OsaSimulator, StrainTypes, StressTypes
+from osa.simulator import OsaSimulator
 
 
 class WorkerThread(QThread):
@@ -19,12 +19,16 @@ class WorkerThread(QThread):
 
     def run(self):
         self.progress.emit(13)
+
+        undeformed_data = None
+        deformed_data = None
+        summary_data = None
+
         try:
             simu = OsaSimulator(**self.params)
             simu.from_file(filepath=self.datafile, units=self.units)
             self.progress.emit(21)
 
-            undeformed_data = None
             if self.include_undeformed_signal:
                 undeformed_data = simu.undeformed_fbg()
                 self.progress.emit(34)

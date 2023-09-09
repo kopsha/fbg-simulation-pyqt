@@ -2,6 +2,7 @@ from pathlib import Path
 from functools import partial
 from itertools import pairwise
 import locale
+
 from numpy import linspace
 from PySide6.QtWidgets import (
     QCheckBox,
@@ -22,7 +23,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 from PySide6.QtCore import Qt, Slot, QCoreApplication
-from PySide6.QtGui import QTextCursor, QDoubleValidator, QCloseEvent
+from PySide6.QtGui import QTextCursor, QDoubleValidator
 
 from osa.simulator import StrainTypes, StressTypes, SiUnits
 from gui.worker import WorkerThread

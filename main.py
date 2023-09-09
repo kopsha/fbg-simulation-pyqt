@@ -3,7 +3,7 @@ import sys
 from PySide6.QtWidgets import QApplication
 from PySide6.QtGui import QIcon
 
-from locale import getlocale, setlocale, LC_ALL
+from locale import setlocale, LC_ALL
 import translation
 from gui.main_window import MainWindow
 from version import VERSION
